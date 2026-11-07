@@ -161,9 +161,14 @@
   font-weight: 600;
 }
 
+.tg-bubble-row {
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+}
+
 .tg-bubble {
   max-width: 75%;
-  width: fit-content;
   padding: 10px 14px;
   border-radius: 14px;
   font-size: 0.9rem;
@@ -171,6 +176,29 @@
   word-wrap: break-word;
   overflow-wrap: anywhere;
   animation: tg-bubble-in 0.18s ease-out;
+  flex-shrink: 0;
+}
+
+@keyframes tg-bubble-in {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.tg-bubble.own {
+  background: var(--pri);
+  color: #FFFFFF;
+  margin-left: auto;
+  border-bottom-right-radius: 4px;
+  border-top-left-radius: 14px;
+}
+
+.tg-bubble.other {
+  background: var(--white);
+  color: var(--ink);
+  border: 1px solid var(--ln);
+  border-bottom-left-radius: 4px;
+  border-top-right-radius: 14px;
+  margin-right: auto;
 }
 
 @keyframes tg-bubble-in {

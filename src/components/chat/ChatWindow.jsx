@@ -51,6 +51,7 @@ function ChatWindow({ conversationId, conversationLabel, onBack }) {
   const [voiceBusy, setVoiceBusy] = useState(false);
   const [voiceError, setVoiceError] = useState('');
   const bottomRef = useRef(null);
+  const inputRef = useRef(null);
 
   const conversation = conversations.find((c) => c.id === conversationId);
   const unread = conversation ? unreadOf(conversation) : 0;
@@ -66,8 +67,16 @@ function ChatWindow({ conversationId, conversationLabel, onBack }) {
   }, [unread, conversationId]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
-    bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [messages]);
+    if (bottomRef.current) {
+      bottomRef.current.scrollIntoView({ behavior: 'smooth' });
+    }
+    // Focus the input field after a short delay to allow DOM to render
+    if (inputRef.current) {
+      setTimeout(() => {
+        inputRef.current.focus();
+      }, 100);
+    }
+  }, [messages, conversationId]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -75,6 +84,10 @@ function ChatWindow({ conversationId, conversationLabel, onBack }) {
     if (!clean) return;
     sendMessage(conversationId, clean);
     setText('');
+    // Focus input after sending
+    if (inputRef.current) {
+      inputRef.current.focus();
+    }
   };
 
   const handleVoice = async (blob, seconds) => {
@@ -193,6 +206,7 @@ function ChatWindow({ conversationId, conversationLabel, onBack }) {
           <FiPaperclip />
         </button>
         <input
+          ref={inputRef}
           type="text"
           value={text}
           onChange={(e) => setText(e.target.value)}

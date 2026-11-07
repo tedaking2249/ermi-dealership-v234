@@ -5,10 +5,27 @@ import './DealerChat.css';
 import '../../components/chat/ChatBadges.css';
 
 function DealerChat() {
-  const { conversations, chatLoading, chatError, unreadOf } = useChat();
+  const { conversations, chatLoading, chatError, unreadOf, getOrCreateConversation, markRead } = useChat();
   const [activeId, setActiveId] = useState(null);
-
   const active = conversations.find((c) => c.id === activeId);
+  const [search, setSearch] = useState('');
+
+  const handleSelect = (conversationId) => {
+    setActiveId(conversationId);
+    markRead(conversationId);
+  };
+
+  const handleBack = () => {
+    setActiveId(null);
+  };
+
+  const filtered = conversations.filter((c) => {
+    const q = search.trim().toLowerCase();
+    if (!q) return true;
+    return [c.buyerName, c.vehicleName, c.lastMessage]
+      .filter(Boolean)
+      .some((value) => String(value).toLowerCase().includes(q));
+  });
 
   return (
     <div className="dealer-chat-page">
@@ -30,7 +47,7 @@ function DealerChat() {
               <button
                 key={c.id}
                 className={`dealer-chat-item ${activeId === c.id ? 'active' : ''} ${unread > 0 ? 'chat-item-unread' : ''}`}
-                onClick={() => setActiveId(c.id)}
+                onClick={() => handleSelect(c.id)}
               >
                 <span className="chat-item-top">
                   <span className="dealer-chat-item-name">{c.buyerName}</span>
