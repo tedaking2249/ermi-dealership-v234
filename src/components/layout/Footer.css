@@ -1,0 +1,14 @@
+.footer {
+  border-top: 1px solid var(--color-border);
+  background-color: var(--color-primary-light);
+  margin-top: var(--spacing-xl);
+}
+
+.footer-container {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: var(--spacing-lg);
+  text-align: center;
+  font-size: var(--font-size-sm);
+  color: var(--color-text-light);
+}

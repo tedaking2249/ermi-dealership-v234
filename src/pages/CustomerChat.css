@@ -1,0 +1,211 @@
+.tg-page {
+  height: calc(100vh - var(--header-height, 64px));
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0;
+  overflow: hidden;
+}
+
+.tg-layout {
+  display: grid;
+  grid-template-columns: 360px 1fr;
+  height: 100%;
+  background: var(--color-surface, var(--white));
+  border-radius: var(--border-radius-lg, 12px);
+  overflow: hidden;
+  box-shadow: var(--shadow-sm, 0 1px 3px rgba(15, 42, 92, 0.08));
+}
+
+.tg-list-panel {
+  display: flex;
+  flex-direction: column;
+  border-right: 1px solid var(--color-border, var(--ln));
+  background: var(--white);
+  min-width: 0;
+}
+
+.tg-list-header {
+  padding: 16px;
+  border-bottom: 1px solid var(--color-border, var(--ln));
+}
+
+.tg-list-header h1 {
+  margin: 0 0 12px;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--navy);
+}
+
+.tg-search-input {
+  width: 100%;
+  padding: 10px 14px;
+  border: 1px solid var(--color-border, var(--ln));
+  border-radius: 999px;
+  background: var(--color-background-alt, var(--soft));
+  font-size: 0.9rem;
+  outline: none;
+  transition: border-color 0.15s ease, background-color 0.15s ease;
+}
+
+.tg-search-input:focus {
+  border-color: var(--pri);
+  background: var(--white);
+}
+
+.tg-conversation-list {
+  flex: 1;
+  overflow-y: auto;
+  padding: 8px;
+}
+
+.tg-empty {
+  padding: 24px 16px;
+  text-align: center;
+  color: var(--color-text-light, var(--sub));
+  font-size: 0.875rem;
+  line-height: 1.5;
+}
+
+.tg-conversation-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 10px 12px;
+  border: none;
+  background: transparent;
+  border-radius: 12px;
+  text-align: left;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+  margin-bottom: 4px;
+}
+
+.tg-conversation-item:hover {
+  background: var(--color-background-alt, var(--soft));
+}
+
+.tg-conversation-item.active {
+  background: var(--soft);
+}
+
+.tg-conversation-item.unread .tg-conversation-name,
+.tg-conversation-item.unread .tg-conversation-preview {
+  font-weight: 700;
+  color: var(--ink);
+}
+.tg-online-dot {
+  position: absolute;
+  right: 2px;
+  bottom: 2px;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--ok);
+  border: 2px solid #ffffff;
+}
+
+.tg-conversation-content {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.tg-conversation-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.tg-conversation-name {
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: #FFFFFF;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.tg-conversation-time {
+  font-size: 0.72rem;
+  color: var(--color-text-light, var(--sub));
+  flex-shrink: 0;
+}
+
+.tg-conversation-vehicle {
+  font-size: 0.78rem;
+  color: var(--pri);
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.tg-conversation-preview {
+  font-size: 0.8rem;
+  color: var(--color-text-light, var(--sub));
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.tg-unread-badge {
+  min-width: 22px;
+  height: 22px;
+  padding: 0 7px;
+  border-radius: 999px;
+  background: var(--pri);
+  color: #ffffff;
+  font-size: 0.72rem;
+  font-weight: 700;
+  line-height: 22px;
+  text-align: center;
+  flex-shrink: 0;
+}
+
+.tg-chat-panel {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  background: var(--white);
+}
+
+.tg-chat-placeholder {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-text-light, var(--sub));
+  font-size: 0.9rem;
+}
+
+@media (max-width: 900px) {
+  .tg-page {
+    height: calc(100vh - var(--header-height, 64px));
+  }
+  .tg-layout {
+    grid-template-columns: 1fr;
+  }
+  .tg-hidden-mobile {
+    display: none !important;
+  }
+}
+
+
+.tg-avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--pri);
+  color: #ffffff;
+  font-weight: 700;
+  font-size: 0.95rem;
+  letter-spacing: 0.02em;
+}
+

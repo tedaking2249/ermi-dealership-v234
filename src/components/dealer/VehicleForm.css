@@ -1,0 +1,62 @@
+.vehicle-form {
+  margin-top: var(--spacing-md);
+}
+
+.vehicle-form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--spacing-md);
+}
+
+.vehicle-form-full {
+  grid-column: 1 / -1;
+}
+
+.vehicle-form label {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.vehicle-form input,
+.vehicle-form select {
+  padding: var(--spacing-sm);
+  border: 1px solid var(--color-border);
+  border-radius: var(--border-radius);
+  font-size: var(--font-size-base);
+  font-family: inherit;
+}
+
+.vehicle-form input:focus,
+.vehicle-form select:focus {
+  outline: none;
+  border-color: var(--color-primary);
+}
+
+.vehicle-form-checkbox {
+  flex-direction: row !important;
+  align-items: center;
+  gap: var(--spacing-sm) !important;
+}
+
+.vehicle-form-checkbox input {
+  width: 16px;
+  height: 16px;
+  accent-color: var(--color-primary);
+}
+
+.vehicle-form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--spacing-sm);
+  margin-top: var(--spacing-lg);
+}
+
+@media (max-width: 600px) {
+  .vehicle-form-grid {
+    grid-template-columns: 1fr;
+  }
+}

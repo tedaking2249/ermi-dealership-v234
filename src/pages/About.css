@@ -1,0 +1,65 @@
+.about-page {
+  max-width: var(--max-width);
+  margin: 0 auto;
+}
+
+.about-hero {
+  background-color: var(--color-background-alt);
+  padding: var(--spacing-xl) var(--spacing-lg);
+  text-align: center;
+}
+
+.about-hero h1 {
+  font-size: var(--font-size-2xl);
+  margin-bottom: var(--spacing-sm);
+}
+
+.about-hero p {
+  font-size: var(--font-size-lg);
+  color: var(--color-text-light);
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.about-content {
+  padding: var(--spacing-xl) var(--spacing-lg);
+}
+
+.about-block {
+  margin-bottom: var(--spacing-xl);
+}
+
+.about-block h2 {
+  font-size: var(--font-size-xl);
+  margin-bottom: var(--spacing-md);
+}
+
+.about-block p {
+  color: var(--color-text-light);
+  line-height: 1.6;
+  max-width: 800px;
+}
+
+.about-values {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: var(--spacing-lg);
+  margin-top: var(--spacing-md);
+}
+
+.value-card {
+  padding: var(--spacing-md);
+  border: 1px solid var(--color-border);
+  border-radius: var(--border-radius);
+}
+
+.value-card h3 {
+  font-size: var(--font-size-base);
+  color: var(--color-primary);
+  margin-bottom: var(--spacing-xs);
+}
+
+.value-card p {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-light);
+}

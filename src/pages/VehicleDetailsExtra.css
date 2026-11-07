@@ -1,0 +1,198 @@
+.vd-page {
+  width: 100%;
+}
+
+/* Photo gallery */
+.vd-gallery {
+  position: relative;
+}
+
+.vd-no-photo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  min-height: 220px;
+  background: var(--soft);
+  color: var(--sub);
+}
+
+.vd-thumbs {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  gap: 8px;
+  padding: 10px;
+  overflow-x: auto;
+  background: linear-gradient(to top, rgba(15, 42, 92, 0.45), rgba(15, 42, 92, 0));
+}
+
+.vd-thumb {
+  flex: 0 0 auto;
+  width: 64px;
+  height: 48px;
+  padding: 0;
+  border: 2px solid rgba(255, 255, 255, 0.7);
+  border-radius: 6px;
+  overflow: hidden;
+  background: var(--white);
+  cursor: pointer;
+  opacity: 0.85;
+}
+
+.vd-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.vd-thumb.active {
+  border-color: var(--pri);
+  opacity: 1;
+}
+
+/* Status badge and notes */
+.vd-status {
+  display: inline-block;
+  margin: 0 0 8px;
+  padding: 4px 12px;
+  border-radius: 999px;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.vd-status-reserved {
+  background: var(--warn-bg);
+  color: var(--warn);
+}
+
+.vd-status-sold {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+.vd-note {
+  margin-top: 12px;
+  color: var(--sub);
+  font-size: 0.9rem;
+}
+
+.vehicle-details-actions button:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+/* Detail sections below the main block */
+.vd-extra {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 16px 40px;
+}
+
+.vd-section {
+  margin-top: 24px;
+  padding: 20px;
+  background: var(--white);
+  border: 1px solid var(--soft);
+  border-radius: 12px;
+}
+
+.vd-section h2 {
+  margin: 0 0 14px;
+  font-size: 1.1rem;
+  color: var(--pri);
+}
+
+.vd-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 12px;
+}
+
+.vd-grid-item {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 10px 12px;
+  background: var(--soft);
+  border-radius: 8px;
+}
+
+.vd-grid-label {
+  font-size: 0.8rem;
+  color: var(--sub);
+}
+
+.vd-grid-value {
+  font-weight: 600;
+  color: #FFFFFF;
+  word-break: break-word;
+}
+
+.vd-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.vd-tag {
+  padding: 6px 14px;
+  border-radius: 999px;
+  background: var(--soft);
+  color: var(--pri);
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.vd-tag-issue {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+.vd-tag-good {
+  background: var(--soft);
+  color: #166534;
+}
+
+.vd-description {
+  margin: 0;
+  line-height: 1.6;
+  white-space: pre-line;
+  color: #FFFFFF;
+}
+
+@media (max-width: 600px) {
+  .vd-section {
+    padding: 16px;
+  }
+
+  .vd-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+/* Similar choices */
+.vd-similar {
+  margin-top: 24px;
+}
+
+.vd-similar-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+}
+
+@media (min-width: 768px) {
+  .vd-similar-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (min-width: 1024px) {
+  .vd-similar-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}

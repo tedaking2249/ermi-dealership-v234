@@ -1,0 +1,403 @@
+.gmc-page {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: var(--spacing-lg) var(--spacing-md) var(--spacing-xl);
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xl);
+}
+
+.gmc-hero {
+  text-align: center;
+  padding: var(--spacing-lg) var(--spacing-md);
+}
+
+.gmc-hero-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 56px;
+  height: 56px;
+  margin-bottom: var(--spacing-sm);
+  border-radius: 50%;
+  background-color: var(--color-primary-light);
+  color: var(--color-primary);
+  font-size: 1.8rem;
+}
+
+.gmc-hero h1 {
+  margin: 0 0 var(--spacing-sm);
+  font-size: clamp(1.6rem, 5vw, 2.2rem);
+  color: var(--color-text);
+}
+
+.gmc-hero p {
+  max-width: 54ch;
+  margin: 0 auto;
+  color: var(--color-text-light);
+  line-height: 1.6;
+}
+
+.gmc-card {
+  padding: var(--spacing-lg);
+  border: 1px solid var(--color-border);
+  border-radius: var(--border-radius-lg);
+  background-color: var(--color-surface, var(--white));
+  box-shadow: var(--shadow-sm);
+}
+
+.gmc-card h2,
+.gmc-section h2 {
+  margin: 0 0 var(--spacing-sm);
+  font-size: var(--font-size-lg);
+  color: var(--color-text);
+}
+
+.gmc-help {
+  margin: 0 0 var(--spacing-md);
+  color: var(--color-text-light);
+  font-size: var(--font-size-sm);
+  line-height: 1.6;
+}
+
+.gmc-form {
+  display: flex;
+  gap: var(--spacing-sm);
+}
+
+.gmc-form input,
+.gmc-section-head input {
+  flex: 1;
+  min-width: 0;
+  padding: 12px 14px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--border-radius);
+  background-color: var(--color-input-bg, var(--white));
+  color: var(--color-text);
+  font-family: inherit;
+  font-size: var(--font-size-base);
+}
+
+.gmc-form input {
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.gmc-form input:focus,
+.gmc-section-head input:focus {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 0;
+  border-color: var(--color-primary);
+}
+
+.gmc-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 12px 20px;
+  border: none;
+  border-radius: var(--border-radius);
+  background-color: var(--color-primary);
+  color: #fff;
+  font-family: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.gmc-btn:hover {
+  filter: brightness(1.08);
+}
+
+.gmc-error {
+  margin: var(--spacing-md) 0 0;
+  padding: var(--spacing-sm) var(--spacing-md);
+  border-radius: var(--border-radius);
+  background-color: var(--err-bg);
+  border: 1px solid var(--err);
+  color: var(--err);
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  line-height: 1.5;
+}
+
+.gmc-result {
+  margin-top: var(--spacing-md);
+  padding: var(--spacing-md);
+  border-radius: var(--border-radius-lg);
+  background-color: var(--color-background-alt);
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+}
+
+.gmc-year {
+  display: flex;
+  align-items: baseline;
+  gap: var(--spacing-md);
+}
+
+.gmc-year span {
+  color: var(--color-text-light);
+  font-size: var(--font-size-sm);
+}
+
+.gmc-year strong {
+  font-size: 2.2rem;
+  line-height: 1;
+  color: var(--color-primary);
+}
+
+.gmc-result dl {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 6px var(--spacing-md);
+  margin: 0;
+  font-size: var(--font-size-sm);
+}
+
+.gmc-result dt {
+  color: var(--color-text-light);
+}
+
+.gmc-result dd {
+  margin: 0;
+  color: var(--color-text);
+  font-weight: 600;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.gmc-mono {
+  font-family: ui-monospace, Menlo, Consolas, monospace;
+  letter-spacing: 0.04em;
+}
+
+.gmc-note {
+  margin: 0;
+  color: var(--color-text-light);
+  font-size: 0.8rem;
+  line-height: 1.55;
+}
+
+.gmc-warning {
+  display: flex;
+  gap: var(--spacing-sm);
+  margin-top: var(--spacing-md);
+  padding: var(--spacing-sm) var(--spacing-md);
+  border-radius: var(--border-radius);
+  background-color: var(--warn-bg);
+  border: 1px solid var(--warn);
+  color: #fef3c7;
+}
+
+.gmc-warning svg {
+  flex-shrink: 0;
+  margin-top: 2px;
+  font-size: 1.2rem;
+}
+
+.gmc-warning p {
+  margin: 0;
+  font-size: var(--font-size-sm);
+  line-height: 1.55;
+}
+
+.gmc-section-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacing-md);
+  flex-wrap: wrap;
+}
+
+.gmc-section-head input {
+  flex: 0 1 220px;
+}
+
+.gmc-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: var(--spacing-md);
+}
+
+.gmc-brand,
+.gmc-tool {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-md);
+  border: 1px solid var(--color-border);
+  border-radius: var(--border-radius-lg);
+  background-color: var(--color-surface, var(--white));
+  min-width: 0;
+}
+
+.gmc-brand-head {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+}
+
+.gmc-brand-head h3 {
+  margin: 0;
+  font-size: var(--font-size-base);
+  color: var(--color-text);
+}
+
+.gmc-brand-head small {
+  color: var(--color-text-light);
+}
+
+.gmc-brand-mark {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: var(--color-primary-light);
+  color: var(--color-primary);
+  font-weight: 800;
+}
+
+.gmc-links {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.gmc-link {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacing-sm);
+  padding: 9px 12px;
+  border-radius: var(--border-radius);
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.gmc-link-site {
+  background-color: var(--color-background-alt);
+  color: var(--color-text);
+}
+
+.gmc-link-recall {
+  background-color: var(--color-primary-light);
+  color: var(--color-primary);
+}
+
+.gmc-link:hover {
+  filter: brightness(0.96);
+}
+
+.gmc-brand-note {
+  margin: 0;
+  color: var(--color-text-light);
+  font-size: 0.8rem;
+  line-height: 1.5;
+}
+
+.gmc-tool {
+  text-decoration: none;
+  color: var(--color-text);
+}
+
+.gmc-tool:hover {
+  border-color: var(--color-primary);
+}
+
+.gmc-tool strong {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--color-primary);
+}
+
+.gmc-tool span {
+  color: var(--color-text-light);
+  font-size: var(--font-size-sm);
+  line-height: 1.5;
+}
+
+
+.gmc-input-wrap {
+  position: relative;
+  flex: 1;
+  min-width: 0;
+}
+.gmc-input-wrap input { width: 100%; }
+.gmc-char-count {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: var(--font-size-sm);
+  color: var(--color-text-light);
+  pointer-events: none;
+}
+.gmc-section-title {
+  margin: var(--spacing-md) 0 var(--spacing-sm);
+  font-size: var(--font-size-base);
+  color: var(--color-text);
+}
+.gmc-verify-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+}
+.gmc-verify-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-sm) var(--spacing-md);
+  border-radius: var(--border-radius);
+  border: 1px solid var(--color-border);
+  background-color: var(--color-background-alt);
+  font-size: var(--font-size-sm);
+}
+.gmc-status-badge {
+  padding: 2px 10px;
+  border-radius: 999px;
+  font-weight: 700;
+  font-size: 0.75rem;
+}
+.gmc-status-ok { border-color: var(--ok); }
+.gmc-status-ok .gmc-status-badge { background-color: var(--ok-bg); color: var(--ok-text); }
+.gmc-status-fail { border-color: var(--err); }
+.gmc-status-fail .gmc-status-badge { background-color: var(--err-bg); color: var(--err); }
+.gmc-status-warn { border-color: var(--warn); }
+.gmc-status-warn .gmc-status-badge { background-color: var(--warn-bg); color: var(--warn); }
+.gmc-status-info { border-color: var(--color-border); }
+.gmc-status-info .gmc-status-badge { background-color: var(--color-background-alt); color: var(--color-text-light); }
+
+@media (max-width: 520px) {
+
+  .gmc-form {
+    flex-direction: column;
+  }
+  .gmc-btn {
+    justify-content: center;
+  }
+}
+
+/* gmc-sites: the two website cards */
+.gmc-site-number { margin: 0 0 12px; color: #5b6b87; font-size: 14px; }
+.gmc-site-number code { background: #eaf2ff; color: #1d4ed8; padding: 3px 10px; border-radius: 999px; font-weight: 700; letter-spacing: 0.03em; word-break: break-all; }
+.gmc-site-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 14px; }
+.gmc-site-card { display: flex; flex-direction: column; gap: 12px; background: #ffffff; border: 1px solid #dbe5f5; border-radius: 16px; padding: 18px; box-shadow: 0 2px 10px rgba(15, 42, 92, 0.06); }
+.gmc-site-top { display: flex; align-items: center; gap: 12px; }
+.gmc-site-top h3 { margin: 0; font-size: 17px; color: #0f2a5c; }
+.gmc-site-top small { color: #5b6b87; font-size: 12.5px; }
+.gmc-site-mark { width: 42px; height: 42px; border-radius: 12px; background: #2563eb; color: #ffffff; display: grid; place-items: center; font-weight: 800; font-size: 18px; flex-shrink: 0; }
+.gmc-site-text { margin: 0; color: #3d4d6b; font-size: 14px; line-height: 1.55; }
+.gmc-site-tags { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 6px; }
+.gmc-site-tags li { background: #eaf2ff; color: #1d4ed8; border-radius: 999px; padding: 4px 10px; font-size: 12px; font-weight: 700; }
+.gmc-site-btn { margin-top: auto; display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 44px; padding: 10px 16px; border-radius: 12px; background: #2563eb; color: #ffffff; font-weight: 700; font-size: 14px; text-decoration: none; }
+.gmc-site-btn:hover { background: #1d4ed8; }
+.gmc-site-btn:focus-visible { outline: 3px solid rgba(37, 99, 235, 0.35); outline-offset: 2px; }

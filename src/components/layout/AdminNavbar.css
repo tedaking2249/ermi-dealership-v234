@@ -1,0 +1,173 @@
+.admin-navbar {
+  border-bottom: 1px solid var(--ln);
+  background-color: var(--white);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.admin-navbar-container {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: var(--spacing-md) var(--spacing-lg);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.admin-navbar-logo {
+  font-size: var(--font-size-lg);
+  font-weight: 800;
+  color: var(--navy);
+  letter-spacing: -0.02em;
+  z-index: 101;
+}
+
+.admin-navbar-logo span {
+  color: var(--pri);
+  font-weight: 500;
+}
+
+.admin-navbar-toggle {
+  display: none;
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  color: var(--ink);
+  padding: var(--spacing-xs);
+  z-index: 101;
+}
+
+.admin-navbar-links {
+  display: flex;
+  gap: var(--spacing-lg);
+}
+
+.admin-navbar-links a {
+  color: var(--sub);
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  transition: color var(--transition);
+  position: relative;
+  padding-bottom: 4px;
+}
+
+.admin-navbar-links a:hover {
+  color: var(--pri);
+}
+
+.admin-navbar-links a.active {
+  color: var(--pri);
+  font-weight: 600;
+}
+
+.admin-navbar-links a.active::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background-color: var(--pri);
+}
+
+.admin-navbar-links a:hover {
+  color: var(--pri);
+}
+
+.admin-navbar-link-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.admin-navbar-badge {
+  background-color: var(--red-rec);
+  color: #fff;
+  font-size: 0.7rem;
+  font-weight: 700;
+  min-width: 18px;
+  height: 18px;
+  border-radius: 999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 4px;
+}
+
+.admin-navbar-actions-mobile {
+  display: none;
+}
+
+.admin-navbar-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+}
+
+.admin-navbar-user {
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  color: var(--sub);
+}
+
+.btn-login {
+  padding: 8px 16px;
+  border-radius: 999px;
+  background-color: var(--pri);
+  color: #fff;
+  font-size: var(--font-size-sm);
+  font-weight: 700;
+  border: none;
+  cursor: pointer;
+  transition: background-color var(--transition);
+}
+
+.btn-login:hover {
+  background-color: var(--pri-d);
+}
+
+@media (max-width: 760px) {
+  .admin-navbar-toggle {
+    display: block;
+  }
+
+  .admin-navbar-actions {
+    display: none;
+  }
+
+  .admin-navbar-links {
+    position: fixed;
+    top: 0;
+    right: -100%;
+    width: min(280px, 80vw);
+    height: 100vh;
+    background-color: var(--white);
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--spacing-lg);
+    padding: calc(var(--spacing-xl) * 1.8) var(--spacing-lg) var(--spacing-lg);
+    box-shadow: -4px 0 24px rgba(15, 42, 92, 0.12);
+    transition: right var(--transition);
+  }
+
+  .admin-navbar-links.open {
+    right: 0;
+  }
+
+  .admin-navbar-links a {
+    font-size: var(--font-size-base);
+    width: 100%;
+  }
+
+  .admin-navbar-actions-mobile {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--spacing-sm);
+    width: 100%;
+    margin-top: var(--spacing-md);
+    padding-top: var(--spacing-md);
+    border-top: 1px solid var(--ln);
+  }
+}

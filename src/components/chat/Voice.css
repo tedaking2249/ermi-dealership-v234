@@ -1,0 +1,231 @@
+/* Voice messages. The bar sits on top of the message bar while recording. */
+
+.tg-input-bar {
+  position: relative;
+}
+
+/* Telegram style: the send arrow shows only when there is text, the microphone when there is none */
+.tg-input-bar .tg-send-btn:disabled {
+  display: none;
+}
+
+.voice-mic-btn {
+  order: 10;
+  width: 32px;
+  height: 32px;
+  border: none;
+  border-radius: 50%;
+  background: var(--pri);
+  color: #fff;
+  font-size: 1rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: filter 0.15s ease, transform 0.15s ease;
+}
+
+.voice-mic-btn:hover:not(:disabled) {
+  filter: brightness(1.1);
+  transform: translateY(-1px);
+}
+
+.voice-mic-btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.voice-recording-bar {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  background: var(--white);
+  color: var(--ink);
+}
+
+.voice-cancel-btn,
+.voice-send-btn {
+  width: 40px;
+  height: 40px;
+  border: none;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  font-size: 1.1rem;
+  cursor: pointer;
+}
+
+.voice-cancel-btn {
+  background: transparent;
+  color: var(--err);
+}
+
+.voice-cancel-btn:hover {
+  background: var(--err-bg);
+}
+
+.voice-send-btn {
+  margin-left: auto;
+  background: var(--ok);
+  color: #ffffff;
+}
+
+.voice-send-btn:hover {
+  filter: brightness(1.1);
+}
+
+.voice-rec-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--red-rec);
+  animation: voice-pulse 1.1s ease-in-out infinite;
+  flex-shrink: 0;
+}
+
+@keyframes voice-pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.35; transform: scale(0.8); }
+}
+
+.voice-rec-time {
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.voice-rec-time small {
+  opacity: 0.6;
+  font-weight: 400;
+}
+
+.voice-rec-hint {
+  opacity: 0.7;
+  font-size: 0.8rem;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.voice-status,
+.voice-error {
+  margin: 0;
+  padding: 6px 16px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  flex-shrink: 0;
+}
+
+.voice-status {
+  background: var(--white);
+  color: var(--sub);
+}
+
+.voice-error {
+  background: var(--soft);
+  color: var(--err);
+}
+/* The player inside a chat bubble */
+.voice-message {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 190px;
+}
+
+.voice-play-btn {
+  width: 26px;
+  height: 26px;
+  border: none;
+  border-radius: 50%;
+  background: var(--white);
+  color: var(--pri);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  font-size: 0.9rem;
+  cursor: pointer;
+  box-shadow: 0 1px 3px rgba(15, 42, 92, 0.12);
+}
+
+.tg-bubble.own .voice-play-btn {
+  color: var(--pri-d);
+}
+
+.tg-bubble.other .voice-play-btn {
+  color: var(--pri);
+}
+
+.voice-track {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.voice-range {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 4px;
+  margin: 8px 0 4px;
+  border-radius: 999px;
+  background: linear-gradient(
+    to right,
+    currentColor var(--voice-progress, 0%),
+    rgba(255, 255, 255, 0.3) var(--voice-progress, 0%)
+  );
+  cursor: pointer;
+}
+
+.voice-range::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: currentColor;
+  border: none;
+}
+
+.voice-range::-moz-range-thumb {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: currentColor;
+  border: none;
+}
+
+.voice-time {
+  font-size: 0.7rem;
+  font-variant-numeric: tabular-nums;
+  opacity: 0.85;
+}
+
+.voice-unavailable {
+  margin: 0;
+  font-size: 0.82rem;
+  opacity: 0.85;
+}
+
+@media (max-width: 600px) {
+  .voice-message {
+    min-width: 160px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .voice-rec-dot {
+    animation: none;
+  }
+}

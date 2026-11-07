@@ -1,0 +1,102 @@
+.my-submissions-page {
+  max-width: var(--max-width, 1100px);
+  margin: 0 auto;
+  padding: var(--spacing-xl, 2rem) var(--spacing-lg, 1rem);
+}
+
+.my-submissions-page h1 {
+  font-size: var(--font-size-xl, 1.5rem);
+  margin-bottom: var(--spacing-sm, 0.5rem);
+}
+
+.my-submissions-subtitle {
+  color: var(--color-text-light, var(--sub));
+  font-size: var(--font-size-sm, 0.875rem);
+  margin-bottom: var(--spacing-lg, 1.5rem);
+}
+
+.my-submissions-empty {
+  text-align: center;
+  padding: var(--spacing-xl, 2rem);
+  color: var(--color-text-light, var(--sub));
+}
+
+.my-submissions-list {
+  display: grid;
+  gap: var(--spacing-md, 1rem);
+}
+
+.my-submission-card {
+  display: flex;
+  gap: var(--spacing-md, 1rem);
+  border: 1px solid var(--color-border, var(--ln));
+  border-radius: var(--border-radius-lg, 12px);
+  padding: var(--spacing-md, 1rem);
+  background: var(--color-surface, var(--white));
+}
+
+.my-submission-thumb {
+  width: 96px;
+  height: 96px;
+  object-fit: cover;
+  border-radius: var(--border-radius, 8px);
+  flex-shrink: 0;
+}
+
+.my-submission-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs, 0.25rem);
+}
+
+.my-submission-title {
+  font-weight: 700;
+  font-size: var(--font-size-base, 1rem);
+}
+
+.my-submission-meta {
+  font-size: var(--font-size-sm, 0.875rem);
+  color: var(--color-text-light, var(--sub));
+}
+
+.my-submission-status {
+  align-self: flex-start;
+  padding: 2px var(--spacing-sm, 0.5rem);
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: capitalize;
+}
+
+.my-submission-status.pending {
+  background: var(--warn-bg);
+  color: var(--warn);
+}
+
+.my-submission-status.approved {
+  background: var(--soft);
+  color: #166534;
+}
+
+.my-submission-status.rejected {
+  background: var(--soft);
+  color: #991b1b;
+}
+
+.my-submission-rejected {
+  margin-top: var(--spacing-sm, 0.5rem);
+  padding: var(--spacing-sm, 0.5rem);
+  border-radius: var(--border-radius, 8px);
+  background: var(--soft);
+  color: #991b1b;
+  font-size: var(--font-size-sm, 0.875rem);
+  font-weight: 600;
+}
+
+.my-submission-link {
+  margin-top: var(--spacing-xs, 0.25rem);
+  font-size: var(--font-size-sm, 0.875rem);
+  color: var(--color-primary, var(--pri));
+  text-decoration: none;
+}

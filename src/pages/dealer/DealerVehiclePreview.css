@@ -1,0 +1,10 @@
+.dealer-preview-bar {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: var(--spacing-md) var(--spacing-lg) 0;
+  font-size: var(--font-size-sm);
+  color: var(--color-text-light);
+}

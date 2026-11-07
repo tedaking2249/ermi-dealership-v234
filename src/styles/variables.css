@@ -1,0 +1,85 @@
+:root {
+  /* Colors — light blue & white dealership theme */
+  --pri:      #2563eb;
+  --pri-d:    #1d4ed8;
+  --navy:     #0f2a5c;
+  --soft:     #eaf2ff;
+  --soft2:    #f5f9ff;
+  --white:    #ffffff;
+  --ink:      #10213f;
+  --sub:      #5b6b87;
+  --ln:       #dbe5f5;
+
+  --ok:       #16a34a;
+  --ok-bg:    #dcfce7;
+  --ok-text:  #166534;
+  --warn:     #b45309;
+  --warn-bg:  #fef3c7;
+  --gone:     #64748b;
+  --gone-bg:  #e5e9f0;
+  --err:      #b91c1c;
+  --err-bg:   #fee2e2;
+  --red-rec:  #dc2626;
+
+  --chat-bg:  #e8f0fc;
+  --placeholder: #8a98b3;
+
+  --color-primary: var(--pri);
+  --color-primary-dark: var(--pri-d);
+  --color-primary-light: var(--soft);
+  --color-navy: var(--navy);
+  --color-navy-soft: var(--soft);
+  --color-accent: var(--pri);
+  --color-accent-dark: var(--pri-d);
+  --color-text: var(--ink);
+  --color-text-light: var(--sub);
+  --color-background: var(--soft2);
+  --color-background-alt: var(--white);
+  --color-border: var(--ln);
+  --color-success: var(--ok);
+  --color-danger: var(--red-rec);
+  --color-surface: var(--white);
+  --color-surface-2: var(--soft);
+  --color-surface-elevated: var(--white);
+  --color-input-bg: var(--white);
+  --color-input-border: var(--ln);
+  --color-muted: var(--sub);
+  --color-disabled: var(--placeholder);
+  --color-border-strong: var(--ln);
+  --color-white-surface: var(--white);
+  --color-dark-on-white: var(--ink);
+
+  --font-family: 'Plus Jakarta Sans', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --font-size-sm: 0.875rem;
+  --font-size-base: 0.875rem;
+  --font-size-lg: 1.125rem;
+  --font-size-xl: 1.5rem;
+  --font-size-2xl: 2.25rem;
+
+  --spacing-xs: 4px;
+  --spacing-sm: 8px;
+  --spacing-md: 16px;
+  --spacing-lg: 24px;
+  --spacing-xl: 40px;
+
+  --max-width: 1200px;
+  --border-radius: 10px;
+  --border-radius-lg: 16px;
+  --transition: 0.2s ease-in-out;
+  --shadow-sm: 0 1px 3px rgba(15, 42, 92, 0.08);
+  --shadow-md: 0 2px 8px rgba(15, 42, 92, 0.05);
+  --shadow-lg: 0 10px 30px rgba(15, 42, 92, 0.12);
+  --shadow-search: 0 4px 14px rgba(37, 99, 235, 0.08);
+}
+
+body {
+  background-color: var(--soft2);
+  color: var(--ink);
+  font-family: var(--font-family);
+  font-size: 14px;
+}
+
+:focus-visible {
+  outline: 3px solid rgba(37, 99, 235, 0.35);
+  outline-offset: 2px;
+}

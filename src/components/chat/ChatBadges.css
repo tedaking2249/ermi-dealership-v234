@@ -1,0 +1,44 @@
+.chat-unread-badge {
+  min-width: 20px;
+  height: 20px;
+  padding: 0 6px;
+  border-radius: 999px;
+  background-color: var(--color-danger);
+  color: #fff;
+  font-size: 0.7rem;
+  font-weight: 700;
+  line-height: 20px;
+  text-align: center;
+  flex-shrink: 0;
+  box-shadow: 0 1px 2px rgba(185, 28, 28, 0.25);
+}
+
+.chat-item-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  width: 100%;
+}
+
+.chat-item-unread .customer-chat-item-preview,
+.chat-item-unread .dealer-chat-item-preview {
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.chat-item-unread .customer-chat-item-vehicle,
+.chat-item-unread .dealer-chat-item-name {
+  color: var(--color-text);
+}
+
+.chat-error-banner {
+  margin-bottom: var(--spacing-md);
+  padding: var(--spacing-sm) var(--spacing-md);
+  border-radius: var(--border-radius);
+  background-color: var(--err-bg);
+  color: var(--err);
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  border: 1px solid var(--err);
+}

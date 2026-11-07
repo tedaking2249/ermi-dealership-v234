@@ -1,0 +1,232 @@
+.my-requests-page {
+  max-width: 820px;
+  margin: 0 auto;
+  padding: var(--spacing-xl) var(--spacing-lg);
+}
+
+.my-requests-page h1 {
+  font-size: var(--font-size-xl);
+}
+
+.my-requests-subtitle {
+  color: var(--color-text-light);
+  font-size: var(--font-size-sm);
+  margin-bottom: var(--spacing-lg);
+}
+
+.my-requests-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-md);
+  padding: var(--spacing-xl);
+  color: var(--color-text-light);
+  text-align: center;
+}
+
+.my-requests-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+}
+
+.my-request {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-md);
+  border: 1px solid var(--color-border);
+  border-left: 4px solid var(--color-border);
+  border-radius: var(--border-radius-lg);
+  background-color: var(--color-surface, var(--white));
+  box-shadow: var(--shadow-sm);
+}
+
+.my-request.status-pending {
+  border-left-color: var(--color-primary);
+}
+
+.my-request.status-confirmed {
+  border-left-color: var(--color-success);
+}
+
+.my-request.status-declined,
+.my-request.status-cancelled {
+  border-left-color: var(--err);
+}
+
+.my-request.is-new {
+  box-shadow: 0 0 0 3px var(--color-primary-light);
+}
+
+.my-request-new {
+  position: absolute;
+  top: var(--spacing-sm);
+  right: var(--spacing-sm);
+  padding: 2px var(--spacing-sm);
+  border-radius: 999px;
+  background-color: var(--red-rec);
+  color: #fff;
+  font-size: 0.7rem;
+  font-weight: 700;
+}
+
+.my-request-car {
+  display: flex;
+  gap: var(--spacing-md);
+  align-items: center;
+}
+
+.my-request-car img {
+  width: 96px;
+  height: 68px;
+  object-fit: cover;
+  border-radius: var(--border-radius);
+  flex-shrink: 0;
+}
+
+.my-request-type {
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  color: var(--color-text-light);
+}
+
+.my-request-car h3 {
+  font-size: var(--font-size-base);
+  margin: 2px 0;
+}
+
+.my-request-car h3 a {
+  color: var(--color-primary);
+}
+
+.my-request-status {
+  font-size: var(--font-size-sm);
+  font-weight: 700;
+  color: var(--color-text-light);
+}
+
+.my-request-status.pending {
+  color: var(--color-primary);
+}
+
+.my-request-status.confirmed {
+  color: var(--color-success);
+}
+
+.my-request-status.declined,
+.my-request-status.cancelled {
+  color: var(--err);
+}
+
+.my-request-details {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.my-request-details div {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--spacing-md);
+  font-size: var(--font-size-sm);
+}
+
+.my-request-details span {
+  color: var(--color-text-light);
+}
+
+.my-request-confirmed strong {
+  color: var(--color-success);
+}
+
+.my-request-changed {
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  color: var(--warn);
+}
+
+.my-request-ok {
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  color: var(--color-success);
+}
+
+.my-request-note {
+  font-size: var(--font-size-sm);
+  font-style: italic;
+  color: var(--color-text);
+  padding: var(--spacing-sm);
+  border-radius: var(--border-radius);
+  background-color: var(--color-background-alt);
+}
+
+.my-request-panel {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-md);
+  border: 1px solid var(--color-border);
+  border-radius: var(--border-radius);
+  background-color: var(--color-background-alt);
+}
+
+.my-request-panel label {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+}
+
+.my-request-panel input {
+  padding: var(--spacing-sm);
+  border: 1px solid var(--color-border);
+  border-radius: var(--border-radius);
+  font-size: var(--font-size-base);
+  font-family: inherit;
+}
+
+.my-request-panel small {
+  color: var(--color-text-light);
+}
+
+.my-request-error {
+  padding: var(--spacing-sm);
+  border-radius: var(--border-radius);
+  background-color: var(--soft);
+  color: var(--err);
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+}
+
+.my-request-actions {
+  display: flex;
+  gap: var(--spacing-sm);
+  flex-wrap: wrap;
+}
+
+.my-request-actions button {
+  flex: 1;
+  padding: var(--spacing-sm);
+  font-size: var(--font-size-sm);
+}
+
+.my-request-actions .danger {
+  color: var(--err);
+}
+
+.my-request-actions button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+@media (max-width: 480px) {
+  .my-request-car img {
+    width: 72px;
+    height: 54px;
+  }
+}

@@ -1,0 +1,189 @@
+.bottom-nav {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 120;
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  align-items: end;
+  padding: 8px 6px calc(8px + env(safe-area-inset-bottom));
+  background-color: var(--white);
+  border-top: 1px solid var(--ln);
+  box-shadow: 0 -4px 14px rgba(15, 42, 92, 0.06);
+}
+
+.bottom-tab {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: 4px 0;
+  border: none;
+  background: none;
+  color: #8a98b3;
+  font-family: inherit;
+  font-size: 0.72rem;
+  font-weight: 600;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.bottom-tab.active {
+  color: var(--pri);
+}
+
+.bottom-tab.active .bottom-icon {
+  background-color: var(--soft);
+}
+
+.bottom-icon {
+  position: relative;
+  display: flex;
+  font-size: 1.55rem;
+  padding: 3px 14px;
+  border-radius: 999px;
+}
+
+.bottom-badge {
+  position: absolute;
+  top: -5px;
+  right: -9px;
+  min-width: 17px;
+  height: 17px;
+  padding: 0 4px;
+  border-radius: 999px;
+  background-color: var(--red-rec);
+  color: #fff;
+  font-size: 0.65rem;
+  font-weight: 700;
+  line-height: 17px;
+  text-align: center;
+}
+
+.bottom-badge-soft {
+  background-color: var(--pri);
+}
+
+/* The raised round Sell button in the middle */
+.bottom-sell {
+  color: #FFFFFF;
+}
+
+.bottom-sell-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 56px;
+  height: 56px;
+  margin-top: -30px;
+  border-radius: 50%;
+  background-color: var(--color-primary);
+  border: 4px solid var(--white);
+  color: #fff;
+  font-size: 1.9rem;
+  box-shadow: 0 6px 16px rgba(15, 42, 92,0.35);
+}
+
+.bottom-sell.active {
+  color: var(--color-primary);
+}
+
+/* The "More" sheet that slides up from the bottom */
+.more-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 130;
+  display: flex;
+  align-items: flex-end;
+  background-color: rgba(15, 42, 92,0.5);
+}
+
+.more-sheet {
+  width: 100%;
+  padding: var(--spacing-sm) var(--spacing-md) calc(var(--spacing-lg) + env(safe-area-inset-bottom));
+  border-top-left-radius: 22px;
+  border-top-right-radius: 22px;
+  background-color: var(--white);
+  display: flex;
+  flex-direction: column;
+  animation: more-slide-up 0.2s ease-out;
+}
+
+@keyframes more-slide-up {
+  from { transform: translateY(40px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+.more-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--spacing-sm) 0 var(--spacing-md);
+  border-bottom: 1px solid var(--color-border);
+  color: var(--ink);
+}
+
+.more-header button {
+  display: flex;
+  padding: 6px;
+  border: none;
+  background: none;
+  color: var(--color-text-light);
+  font-size: 1.5rem;
+  cursor: pointer;
+}
+
+.more-sheet a,
+.more-logout {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+  padding: 14px 4px;
+  border: none;
+  border-bottom: 1px solid var(--color-background-alt);
+  background: none;
+  color: var(--color-text);
+  font-family: inherit;
+  font-size: var(--font-size-base);
+  font-weight: 500;
+  text-align: left;
+  cursor: pointer;
+}
+
+.more-sheet svg {
+  font-size: 1.35rem;
+  color: var(--color-primary);
+}
+
+.more-logout {
+  color: var(--err);
+  font-weight: 600;
+  border-bottom: none;
+}
+
+.more-logout svg {
+  color: var(--err);
+}
+
+.more-badge {
+  min-width: 20px;
+  height: 20px;
+  margin-left: auto;
+  padding: 0 6px;
+  border-radius: 999px;
+  background-color: var(--red-rec);
+  color: #fff;
+  font-size: 0.7rem;
+  font-weight: 700;
+  line-height: 20px;
+  text-align: center;
+}
+
+@media (min-width: 860px) {
+  .bottom-nav,
+  .more-backdrop {
+    display: none;
+  }
+}
