@@ -214,20 +214,20 @@ function VehicleDetails() {
                   onClick={() => handleActionClick('reserve')}
                   disabled={isUnavailable}
                 >
-                  Reserve Vehicle
+                  {t('reserve.vehicle')}
                 </button>
                 <button
                   className={`btn-secondary ${activeAction === 'testDrive' ? 'active-toggle' : ''}`}
                   onClick={() => handleActionClick('testDrive')}
                   disabled={isUnavailable}
                 >
-                  Book Test Drive
+                  {t('book.test.drive')}
                 </button>
               </>
             )}
             {!isStaff && (
               <button className="btn-secondary" onClick={handleChatClick} disabled={chatLoading}>
-                {chatLoading ? 'Opening chat...' : 'Chat with Dealer'}
+                {chatLoading ? 'Opening chat...' : t('chat.with.dealer')}
               </button>
             )}
             <a className="btn-secondary vehicle-details-call" href="tel:0974382254">

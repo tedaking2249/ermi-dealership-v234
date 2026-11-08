@@ -70,7 +70,7 @@ function Navbar() {
         <nav className="site-nav" aria-label="Main">
           <NavLink to="/inventory" className={navClass}>{t('nav.inventory')}</NavLink>
           {!isStaff && <NavLink to="/sell" className={navClass}>{t('nav.sell')}</NavLink>}
-          <NavLink to="/google-my-car" className={navClass}>Google my car</NavLink>
+          <NavLink to="/google-my-car" className={navClass}>{t('google.mycar')}</NavLink>
         </nav>
 
         <div className="site-spacer" />
@@ -135,7 +135,7 @@ function Navbar() {
                     </Link>
                   )}
                   {isBuyer && <Link to="/saved" role="menuitem">{t('nav.saved')}</Link>}
-{isBuyer && <Link to="/my-submissions" role="menuitem">My Submissions</Link>}
+{isBuyer && <Link to="/my-submissions" role="menuitem">{t('my.submissions')}</Link>}
 
                   <button type="button" role="menuitem" className="site-menu-logout" onClick={handleLogout}>
                     {t('nav.logout')}

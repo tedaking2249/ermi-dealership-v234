@@ -38,6 +38,37 @@ const MAKE_OPTIONS = {
 const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
 const MAX_PHOTO_BYTES = 5 * 1024 * 1024;
 
+const OPTION_TRANSLATION_KEYS = {
+  EV: 'sell.option.ev',
+  Hybrid: 'sell.option.hybrid',
+  'Petrol or Diesel': 'sell.option.petrolDiesel',
+  Sedan: 'sell.option.sedan',
+  SUV: 'sell.option.suv',
+  Hatchback: 'sell.option.hatchback',
+  Pickup: 'sell.option.pickup',
+  Minivan: 'sell.option.minivan',
+  Other: 'sell.option.other',
+  Automatic: 'sell.option.automatic',
+  Manual: 'sell.option.manual',
+  'Mild Hybrid': 'sell.option.mildHybrid',
+  'Full Hybrid': 'sell.option.fullHybrid',
+  'Plug-in Hybrid': 'sell.option.plugInHybrid',
+  "Don't know": 'sell.option.dontKnow',
+  'Sunroof': 'sell.option.sunroof',
+  'Leather Seats': 'sell.option.leatherSeats',
+  'Massage Seats': 'sell.option.massageSeats',
+  Radar: 'sell.option.radar',
+  '360 Camera': 'sell.option.camera360',
+  'Head-up Display': 'sell.option.headUpDisplay',
+  'Parking Sensors': 'sell.option.parkingSensors',
+  'Reverse Camera': 'sell.option.reverseCamera',
+  'None known': 'sell.option.noneKnown',
+  Engine: 'sell.option.engine',
+  Transmission: 'sell.option.transmission',
+  Electrical: 'sell.option.electrical',
+  'Body/Paint': 'sell.option.bodyPaint',
+};
+
 function SellCar() {
   const navigate = useNavigate();
   const { user } = useAuth();
@@ -59,6 +90,16 @@ function SellCar() {
   const isHybrid = form.vehicleType === 'Hybrid';
   const showBatteryFields = isEV || isHybrid;
   const showHybridOnlyFields = isHybrid;
+
+  const message = (key, values = {}) => Object.entries(values).reduce(
+    (result, [name, value]) => result.replaceAll(`{${name}}`, String(value)),
+    t(key),
+  );
+
+  const translateOption = (value) => {
+    const key = OPTION_TRANSLATION_KEYS[value];
+    return key ? t(key) : value;
+  };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -96,17 +137,17 @@ function SellCar() {
     e.target.value = '';
 
     if (photos.length + files.length > 10) {
-      setError('You can upload a maximum of 10 photos.');
+      setError(t('sell.error.maxPhotos'));
       return;
     }
     const wrongType = files.find((f) => !ALLOWED_TYPES.includes(f.type));
     if (wrongType) {
-      setError(`"${wrongType.name}" is not supported. Please use JPG, PNG or WebP photos.`);
+      setError(message('sell.error.photoType', { name: wrongType.name }));
       return;
     }
     const tooBig = files.find((f) => f.size > MAX_PHOTO_BYTES);
     if (tooBig) {
-      setError(`"${tooBig.name}" is larger than 5 MB. Please choose a smaller photo.`);
+      setError(message('sell.error.photoSize', { name: tooBig.name }));
       return;
     }
     setError('');
@@ -132,13 +173,13 @@ function SellCar() {
     if (submitting) return;
 
     if (!form.vehicleType) {
-      setError('Please select a vehicle type to continue.');
+      setError(t('sell.error.vehicleType'));
       return;
     }
     const currentYear = new Date().getFullYear();
     const yearNum = Number(form.year);
     if (!form.year || Number.isNaN(yearNum) || yearNum < 1980 || yearNum > currentYear) {
-      setError('Please select a valid manufacturing year (1980–' + currentYear + ').');
+      setError(message('sell.error.year', { min: 1980, max: currentYear }));
       return;
     }
     if (!isValidEthiopianPhone(form.sellerPhone)) {
@@ -146,11 +187,11 @@ function SellCar() {
       return;
     }
     if (form.make === 'Other' && !customMake.trim()) {
-      setError('Please enter the vehicle make.');
+      setError(t('sell.error.make'));
       return;
     }
     if (photos.length === 0) {
-      setError('Please upload at least one photo of your vehicle.');
+      setError(t('sell.error.photoRequired'));
       return;
     }
 
@@ -175,12 +216,10 @@ function SellCar() {
       <div className="sell-page">
         <div className="sell-success">
           <h1 className="sell-hero-title">
-            <FiCar className="sell-hero-icon" /> Sell Your Vehicle
+            <FiCar className="sell-hero-icon" /> {t('sell.title')}
           </h1>
-          <p>
-            Please sign in or create a free account first, so we can contact you about your listing.
-          </p>
-          <Link to="/login" className="btn-primary">Sign in or create account</Link>
+          <p>{t('sell.signInPrompt')}</p>
+          <Link to="/login" className="btn-primary">{t('sell.signInButton')}</Link>
         </div>
       </div>
     );
@@ -191,12 +230,11 @@ function SellCar() {
       <div className="sell-page">
         <div className="sell-success">
           <div className="sell-success-icon"><FiCheckCircle /></div>
-          <h1>Listing Submitted</h1>
+          <h1>{t('sell.submittedTitle')}</h1>
           <p>
-            Thanks{form.sellerName ? `, ${form.sellerName}` : ''}! Your vehicle has been sent to
-            our team for review. Once approved, it will appear in our public inventory.
+            {t('sell.thanks')}{form.sellerName ? `, ${form.sellerName}` : ''}! {t('sell.submittedMessage')}
           </p>
-          <button className="btn-primary" onClick={() => navigate('/')}>Back to Home</button>
+          <button className="btn-primary" onClick={() => navigate('/')}>{t('sell.backHome')}</button>
         </div>
       </div>
     );
@@ -206,7 +244,7 @@ function SellCar() {
     <div className="sell-page">
       <div className="sell-hero">
         <h1>{t('sell.title')}</h1>
-        <p>Tell us about your vehicle. Our team reviews every listing before it goes live.</p>
+        <p>{t('sell.intro')}</p>
       </div>
 
       <form className="sell-form" onSubmit={handleSubmit}>
@@ -215,7 +253,7 @@ function SellCar() {
         <section className="sell-section">
           <div className="sell-section-title">
             <span className="sell-step-badge">1</span>
-            <h2>Vehicle Type</h2>
+            <h2>{t('sell.vehicleType')}</h2>
           </div>
           <div className="vehicle-type-grid">
             {VEHICLE_TYPES.map((type) => {
@@ -228,7 +266,7 @@ function SellCar() {
                   onClick={() => selectVehicleType(type)}
                 >
                   <span className="vehicle-type-icon"><Icon /></span>
-                  {type}
+                  {translateOption(type)}
                 </button>
               );
             })}
@@ -240,139 +278,108 @@ function SellCar() {
             <section className="sell-section">
               <div className="sell-section-title">
                 <span className="sell-step-badge">2</span>
-                <h2>Basic Information</h2>
+                <h2>{t('sell.basicInfo')}</h2>
               </div>
               <div className="sell-grid">
                 <label>
-                  Make
+                  {t('sell.make')}
                   <select name="make" value={form.make} onChange={handleChange} required>
-                    <option value="">Select...</option>
+                    <option value="">{t('sell.select')}</option>
                     {(MAKE_OPTIONS[form.vehicleType] || []).map((m) => (
-                      <option key={m} value={m}>{m}</option>
+                      <option key={m} value={m}>{m === 'Other' ? translateOption(m) : m}</option>
                     ))}
                   </select>
                 </label>
                 {form.make === 'Other' && (
                   <label>
-                    Custom Make
+                    {t('sell.customMake')}
                     <input
                       type="text"
                       value={customMake}
                       onChange={(e) => setCustomMake(e.target.value)}
-                      placeholder="Enter make"
+                      placeholder={t('sell.enterMake')}
                       required
                     />
                   </label>
                 )}
                 <label>
-                  Model
-                  <input name="model" value={form.model} onChange={handleChange} placeholder="e.g. Corolla" required />
+                  {t('sell.model')}
+                  <input name="model" value={form.model} onChange={handleChange} placeholder={t('sell.modelPlaceholder')} required />
                 </label>
                 <label>
-                  Year
+                  {t('sell.year')}
                   <select name="year" value={form.year} onChange={handleChange} required>
-                    <option value="">Select Year</option>
+                    <option value="">{t('sell.selectYear')}</option>
                     {Array.from({ length: new Date().getFullYear() - 1980 + 1 }, (_, i) => new Date().getFullYear() - i).map((y) => (
                       <option key={y} value={y}>{y}</option>
                     ))}
                   </select>
                 </label>
                 <label>
-                  Mileage (km)
-                  <input type="number" name="mileage" value={form.mileage} onChange={handleChange} placeholder="e.g. 45000" required />
+                  {t('sell.mileage')}
+                  <input type="number" name="mileage" value={form.mileage} onChange={handleChange} placeholder={t('sell.mileagePlaceholder')} required />
                 </label>
                 <label>
-                  Price (ETB)
-                  <input type="number" name="price" value={form.price} onChange={handleChange} placeholder="e.g. 1500000" required />
+                  {t('sell.price')}
+                  <input type="number" name="price" value={form.price} onChange={handleChange} placeholder={t('sell.pricePlaceholder')} required />
                 </label>
                 <label>
-                  Body Type
+                  {t('sell.bodyType')}
                   <select name="bodyType" value={form.bodyType} onChange={handleChange} required>
-                    <option value="">Select...</option>
-                    {BODY_TYPES.map((b) => <option key={b} value={b}>{b}</option>)}
+                    <option value="">{t('sell.select')}</option>
+                    {BODY_TYPES.map((b) => <option key={b} value={b}>{translateOption(b)}</option>)}
                   </select>
                 </label>
                 <label>
-                  Transmission
+                  {t('sell.transmission')}
                   <select name="transmission" value={form.transmission} onChange={handleChange} required>
-                    <option value="">Select...</option>
-                    {TRANSMISSIONS.map((t) => <option key={t} value={t}>{t}</option>)}
+                    <option value="">{t('sell.select')}</option>
+                    {TRANSMISSIONS.map((value) => <option key={value} value={value}>{translateOption(value)}</option>)}
                   </select>
                 </label>
               </div>
             </section>
 
-            {(showHybridOnlyFields || showBatteryFields) && (
+            {showBatteryFields && (
               <section className="sell-section sell-section-accent">
                 <div className="sell-section-title">
                   <span className="sell-step-badge">3</span>
-                  <h2>{isEV ? 'Electric Details' : 'Hybrid Details'}</h2>
+                  <h2>{isEV ? t('sell.electricDetails') : t('sell.hybridDetails')}</h2>
                 </div>
                 <div className="sell-grid">
                   {showHybridOnlyFields && (
                     <label>
-                      Hybrid Type
+                      {t('sell.hybridType')}
                       <select name="hybridType" value={form.hybridType} onChange={handleChange}>
-                        <option value="">Select...</option>
-                        {HYBRID_TYPES.map((h) => <option key={h} value={h}>{h}</option>)}
+                        <option value="">{t('sell.select')}</option>
+                        {HYBRID_TYPES.map((h) => <option key={h} value={h}>{translateOption(h)}</option>)}
                       </select>
                     </label>
                   )}
                   {showHybridOnlyFields && (
                     <label>
-                      Petrol Range (if known)
-                      <input
-                        name="petrolRange"
-                        value={form.petrolRange}
-                        onChange={handleChange}
-                        placeholder="e.g. 450 km"
-                      />
+                      {t('sell.petrolRange')}
+                      <input name="petrolRange" value={form.petrolRange} onChange={handleChange} placeholder={t('sell.rangePlaceholder')} />
                     </label>
                   )}
                   {showHybridOnlyFields && (
                     <label>
-                      Combined Range (if known)
-                      <input
-                        name="combinedRange"
-                        value={form.combinedRange}
-                        onChange={handleChange}
-                        placeholder="e.g. 600 km"
-                      />
+                      {t('sell.combinedRange')}
+                      <input name="combinedRange" value={form.combinedRange} onChange={handleChange} placeholder={t('sell.rangePlaceholder')} />
                     </label>
                   )}
-                  {showBatteryFields && (
-                    <label>
-                      EV Range (km)
-                      <input
-                        name="evRange"
-                        value={form.evRange}
-                        onChange={handleChange}
-                        placeholder="e.g. 300 km"
-                      />
-                    </label>
-                  )}
-                  {showBatteryFields && (
-                    <label>
-                      Charging Information
-                      <input
-                        name="chargingInfo"
-                        value={form.chargingInfo}
-                        onChange={handleChange}
-                        placeholder="e.g. Type 2, DC fast-charge"
-                      />
-                    </label>
-                  )}
-                  {showBatteryFields && (
-                    <label>
-                      Battery Condition (if known)
-                      <input
-                        name="batteryCondition"
-                        value={form.batteryCondition}
-                        onChange={handleChange}
-                        placeholder="e.g. 92% health"
-                      />
-                    </label>
-                  )}
+                  <label>
+                    {t('sell.evRange')}
+                    <input name="evRange" value={form.evRange} onChange={handleChange} placeholder={t('sell.rangePlaceholder')} />
+                  </label>
+                  <label>
+                    {t('sell.chargingInfo')}
+                    <input name="chargingInfo" value={form.chargingInfo} onChange={handleChange} placeholder={t('sell.chargingPlaceholder')} />
+                  </label>
+                  <label>
+                    {t('sell.batteryCondition')}
+                    <input name="batteryCondition" value={form.batteryCondition} onChange={handleChange} placeholder={t('sell.batteryPlaceholder')} />
+                  </label>
                 </div>
               </section>
             )}
@@ -380,7 +387,7 @@ function SellCar() {
             <section className="sell-section">
               <div className="sell-section-title">
                 <span className="sell-step-badge">4</span>
-                <h2>Features</h2>
+                <h2>{t('sell.features')}</h2>
               </div>
               <div className="chip-group">
                 {FEATURE_OPTIONS.map((f) => (
@@ -390,7 +397,7 @@ function SellCar() {
                     className={`chip ${form.features.includes(f) ? 'active' : ''}`}
                     onClick={() => toggleChip('features', f)}
                   >
-                    {f}
+                    {translateOption(f)}
                   </button>
                 ))}
               </div>
@@ -399,7 +406,7 @@ function SellCar() {
             <section className="sell-section">
               <div className="sell-section-title">
                 <span className="sell-step-badge">5</span>
-                <h2>Known Issues <span className="sell-optional">(optional)</span></h2>
+                <h2>{t('sell.knownIssues')} <span className="sell-optional">({t('sell.optional')})</span></h2>
               </div>
               <div className="chip-group">
                 {MAJOR_ISSUE_OPTIONS.map((m) => (
@@ -409,7 +416,7 @@ function SellCar() {
                     className={`chip chip-warning ${form.majorIssues.includes(m) ? 'active' : ''}`}
                     onClick={() => toggleChip('majorIssues', m)}
                   >
-                    {m}
+                    {translateOption(m)}
                   </button>
                 ))}
               </div>
@@ -418,7 +425,7 @@ function SellCar() {
             <section className="sell-section">
               <div className="sell-section-title">
                 <span className="sell-step-badge">6</span>
-                <h2>Photos <span className="sell-optional">({photos.length}/10)</span></h2>
+                <h2>{t('sell.photos')} <span className="sell-optional">({photos.length}/10)</span></h2>
               </div>
               <label className="photo-upload-box">
                 <input
@@ -429,8 +436,8 @@ function SellCar() {
                   hidden
                 />
                 <span className="photo-upload-icon"><FiCamera /></span>
-                <span className="photo-upload-title">Click to upload photos from your device</span>
-                <span className="photo-upload-hint">Up to 10 images — JPG, PNG or WebP, max 5 MB each</span>
+                <span className="photo-upload-title">{t('sell.uploadPhotos')}</span>
+                <span className="photo-upload-hint">{t('sell.photoHint')}</span>
               </label>
 
               {photos.length > 0 && (
@@ -438,7 +445,7 @@ function SellCar() {
                   {photos.map((p) => (
                     <div key={p.id} className="photo-thumb">
                       <img src={p.dataUrl} alt={p.name} />
-                      <button type="button" onClick={() => removePhoto(p.id)}><FiX /></button>
+                      <button type="button" onClick={() => removePhoto(p.id)} aria-label={t('sell.removePhoto')}><FiX /></button>
                     </div>
                   ))}
                 </div>
@@ -448,22 +455,22 @@ function SellCar() {
             <section className="sell-section">
               <div className="sell-section-title">
                 <span className="sell-step-badge">7</span>
-                <h2>Your Contact Information</h2>
+                <h2>{t('sell.contactInfo')}</h2>
               </div>
               <div className="sell-grid">
                 <label>
-                  <span className="label-with-icon"><FiUser /> Your Name</span>
-                  <input name="sellerName" value={form.sellerName} onChange={handleChange} placeholder="Full name" required />
+                  <span className="label-with-icon"><FiUser /> {t('sell.yourName')}</span>
+                  <input name="sellerName" value={form.sellerName} onChange={handleChange} placeholder={t('sell.fullName')} required />
                 </label>
                 <label>
-                  <span className="label-with-icon"><FiPhone /> Phone Number</span>
-                  <input type="tel" name="sellerPhone" value={form.sellerPhone} onChange={handleChange} placeholder="e.g. 0912345678" maxLength={10} inputMode="numeric" pattern="^(09|07)\d{8}$" required />
+                  <span className="label-with-icon"><FiPhone /> {t('sell.phoneNumber')}</span>
+                  <input type="tel" name="sellerPhone" value={form.sellerPhone} onChange={handleChange} placeholder={t('sell.phonePlaceholder')} maxLength={10} inputMode="numeric" pattern="^(09|07)\d{8}$" required />
                 </label>
               </div>
             </section>
 
             <button type="submit" className="btn-primary sell-submit" disabled={submitting}>
-              {submitting ? 'Uploading photos and submitting...' : t('sell.submit')}
+              {submitting ? t('sell.submitting') : t('sell.submit')}
             </button>
           </>
         )}

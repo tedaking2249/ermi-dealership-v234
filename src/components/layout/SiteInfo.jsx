@@ -5,6 +5,7 @@ import {
 } from 'react-icons/io5';
 import { useAuth } from '../../context/AuthContext';
 import { useChat } from '../../context/ChatContext';
+import { useLanguage } from '../../context/LanguageContext';
 import { siteInfo } from '../../data/siteInfo';
 import './SiteInfo.css';
 
@@ -12,6 +13,7 @@ function SiteInfo() {
   const { user } = useAuth();
   const { getOrCreateConversation } = useChat();
   const navigate = useNavigate();
+  const { t } = useLanguage();
   const [opening, setOpening] = useState(false);
   const [error, setError] = useState('');
 
@@ -29,7 +31,7 @@ function SiteInfo() {
       const conversationId = await getOrCreateConversation(null);
       navigate(`/chat/${conversationId}`);
     } catch (err) {
-      setError(err.message || 'Could not open the chat. Please try again.');
+      setError(err.message || t('contact.error'));
     } finally {
       setOpening(false);
     }
@@ -39,7 +41,7 @@ function SiteInfo() {
     <section className="site-info">
       <div className="site-info-inner">
         <div id="about" className="site-info-block">
-          <h2>About us</h2>
+          <h2>{t('more.about')}</h2>
           {siteInfo.about.map((paragraph) => (
             <p key={paragraph}>{paragraph}</p>
           ))}
@@ -53,7 +55,7 @@ function SiteInfo() {
         </div>
 
         <div id="contact" className="site-info-block">
-          <h2>Contact us</h2>
+          <h2>{t('more.contact')}</h2>
 
           <ul className="site-info-contact">
             {siteInfo.phone && (
@@ -103,7 +105,7 @@ function SiteInfo() {
           {!isStaff && (
             <button type="button" className="site-info-message" onClick={handleMessage} disabled={opening}>
               <IoChatbubbleEllipsesOutline />
-              {opening ? 'Opening chat...' : user ? 'Message the dealer' : 'Sign in to message us'}
+              {opening ? t('contact.opening') : user ? t('contact.messageDealer') : t('contact.signInToMessage')}
             </button>
           )}
         </div>

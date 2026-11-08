@@ -21,7 +21,7 @@ function BottomNav() {
   const { unseenCount } = useRequests();
   const { unreadCount } = useChat();
   const { favoriteIds } = useFavorites();
-  const { lang } = useLanguage();
+  const { lang, t } = useLanguage();
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -48,7 +48,7 @@ function BottomNav() {
       <nav className="bottom-nav" aria-label="Main">
         <NavLink to="/inventory" className={tabClass}>
           <span className="bottom-icon"><IoCarSportOutline /></span>
-          Inventory
+          {t('tab.inventory')}
         </NavLink>
 
         <NavLink to={gated('/saved')} className={tabClass}>
@@ -56,12 +56,12 @@ function BottomNav() {
             <IoHeartOutline />
             {favoriteIds.length > 0 && <span className="bottom-badge bottom-badge-soft">{favoriteIds.length}</span>}
           </span>
-          Saved
+          {t('tab.saved')}
         </NavLink>
 
         <NavLink to="/sell" className="bottom-tab bottom-sell">
           <span className="bottom-sell-button"><IoAdd /></span>
-          Sell
+          {t('tab.sell')}
         </NavLink>
 
         <NavLink to={gated('/chat')} className={tabClass}>
@@ -69,12 +69,12 @@ function BottomNav() {
             <IoChatbubbleEllipsesOutline />
             {unreadCount > 0 && <span className="bottom-badge">{unreadCount}</span>}
           </span>
-          Messages
+          {t('tab.messages')}
         </NavLink>
 
         <button type="button" className="bottom-tab" onClick={() => setMoreOpen(true)} aria-haspopup="dialog">
           <span className="bottom-icon"><IoGridOutline /></span>
-          More
+          {t('tab.more')}
         </button>
       </nav>
 
@@ -82,34 +82,34 @@ function BottomNav() {
         <div className="more-backdrop" onClick={() => setMoreOpen(false)}>
           <div className="more-sheet" role="dialog" aria-label="More" onClick={(e) => e.stopPropagation()}>
             <div className="more-header">
-              <strong>{user ? user.name : 'Welcome'}</strong>
+              <strong>{user ? user.name : t('more.welcome')}</strong>
               <button type="button" onClick={() => setMoreOpen(false)} aria-label="Close">
                 <IoCloseOutline />
               </button>
             </div>
 
-            <Link to="/"><IoHomeOutline /> Home</Link>
-            <Link to="/google-my-car"><IoSearchOutline /> Google my car</Link>
+            <Link to="/"><IoHomeOutline /> {t('nav.home')}</Link>
+            <Link to="/google-my-car"><IoSearchOutline /> {t('google.mycar')}</Link>
             {user && (
               <Link to="/my-requests">
-                <IoDocumentTextOutline /> My Requests
+                <IoDocumentTextOutline /> {t('nav.requests')}
                 {unseenCount > 0 && <span className="more-badge">{unseenCount}</span>}
               </Link>
             )}
             {user && (
               <Link to="/my-submissions">
-                <IoDocumentTextOutline /> {lang === 'am' ? 'የኔ ማመልከቻዎች' : 'My Submissions'}
+                <IoDocumentTextOutline /> {t('my.submissions')}
               </Link>
             )}
-            <Link to={infoTarget(location.pathname, '#about')}><IoInformationCircleOutline /> About us</Link>
-            <Link to={infoTarget(location.pathname, '#contact')}><IoCallOutline /> Contact us</Link>
+            <Link to={infoTarget(location.pathname, '#about')}><IoInformationCircleOutline /> {t('more.about')}</Link>
+            <Link to={infoTarget(location.pathname, '#contact')}><IoCallOutline /> {t('more.contact')}</Link>
 
             {user ? (
               <button type="button" className="more-logout" onClick={handleLogout}>
-                <IoLogOutOutline /> Logout
+                <IoLogOutOutline /> {t('nav.logout')}
               </button>
             ) : (
-              <Link to="/login"><IoLogInOutline /> Login or create account</Link>
+              <Link to="/login"><IoLogInOutline /> {t('more.loginCreate')}</Link>
             )}
           </div>
         </div>

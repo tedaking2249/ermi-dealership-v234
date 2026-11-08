@@ -129,7 +129,7 @@
 
 .vd-grid-value {
   font-weight: 600;
-  color: #FFFFFF;
+  color: #000000;
   word-break: break-word;
 }
 
@@ -162,7 +162,7 @@
   margin: 0;
   line-height: 1.6;
   white-space: pre-line;
-  color: #FFFFFF;
+  color: #000000;
 }
 
 @media (max-width: 600px) {

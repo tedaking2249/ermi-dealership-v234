@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useLanguage } from '../context/LanguageContext';
 import {
   IoSearchOutline, IoShieldCheckmarkOutline, IoInformationCircleOutline,
 } from 'react-icons/io5';
@@ -9,6 +10,7 @@ import { brands, generalTools } from '../data/verifyLinks';
 import './GoogleMyCar.css';
 
 function GoogleMyCar() {
+  const { t } = useLanguage();
   const [vin, setVin] = useState('');
   const [result, setResult] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -54,7 +56,7 @@ function GoogleMyCar() {
     <div className="gmc-page">
       <header className="gmc-hero">
         <span className="gmc-hero-icon"><IoShieldCheckmarkOutline /></span>
-        <h1>Google my car</h1>
+        <h1>{t('google.mycar')}</h1>
         <p>
           Check a car before you buy it. Read the real model year from the VIN, then confirm it on the
           ToyoDIY or VinDecoderz.

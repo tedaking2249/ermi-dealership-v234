@@ -4,6 +4,13 @@ import './FilterPanel.css';
 
 function FilterPanel({ filters, onChange, onClear }) {
   const { t } = useLanguage();
+  const optionLabel = {
+    'EV': t('opt.ev'),
+    'Hybrid': t('common.hybrid'),
+    'Petrol or Diesel': t('common.petrolDiesel'),
+    'Automatic': t('opt.automatic'),
+    'Manual': t('opt.manual'),
+  };
   const toggleArrayValue = (key, value) => {
     const current = filters[key] || [];
     const updated = current.includes(value)
@@ -38,14 +45,14 @@ function FilterPanel({ filters, onChange, onClear }) {
         <div className="filter-range">
           <input
             type="number"
-            placeholder="Min"
+            placeholder={t('filters.min')}
             value={filters.minPrice || ''}
             onChange={(e) => handleInputChange('minPrice', e.target.value)}
           />
           <span>–</span>
           <input
             type="number"
-            placeholder="Max"
+            placeholder={t('filters.max')}
             value={filters.maxPrice || ''}
             onChange={(e) => handleInputChange('maxPrice', e.target.value)}
           />
@@ -53,18 +60,18 @@ function FilterPanel({ filters, onChange, onClear }) {
       </div>
 
       <div className="filter-group">
-        <h4>Year Range</h4>
+        <h4>{t('filters.yearRange')}</h4>
         <div className="filter-range">
           <input
             type="number"
-            placeholder="Min"
+            placeholder={t('filters.min')}
             value={filters.minYear || ''}
             onChange={(e) => handleInputChange('minYear', e.target.value)}
           />
           <span>–</span>
           <input
             type="number"
-            placeholder="Max"
+            placeholder={t('filters.max')}
             value={filters.maxYear || ''}
             onChange={(e) => handleInputChange('maxYear', e.target.value)}
           />
@@ -72,7 +79,7 @@ function FilterPanel({ filters, onChange, onClear }) {
       </div>
 
       <div className="filter-group">
-        <h4>Vehicle Type</h4>
+        <h4>{t('filters.vehicleType')}</h4>
         {VEHICLE_TYPES.map((option) => (
           <label key={option} className="filter-checkbox">
             <input
@@ -80,13 +87,13 @@ function FilterPanel({ filters, onChange, onClear }) {
               checked={(filters.fuelTypes || []).includes(option)}
               onChange={() => toggleArrayValue('fuelTypes', option)}
             />
-            {option}
+            {optionLabel[option] || option}
           </label>
         ))}
       </div>
 
       <div className="filter-group">
-        <h4>Transmission</h4>
+        <h4>{t('filters.transmission')}</h4>
         {TRANSMISSIONS.map((option) => (
           <label key={option} className="filter-checkbox">
             <input
@@ -94,7 +101,7 @@ function FilterPanel({ filters, onChange, onClear }) {
               checked={(filters.transmissions || []).includes(option)}
               onChange={() => toggleArrayValue('transmissions', option)}
             />
-            {option}
+            {optionLabel[option] || option}
           </label>
         ))}
       </div>
