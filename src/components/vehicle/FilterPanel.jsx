@@ -10,6 +10,7 @@ function FilterPanel({ filters, onChange, onClear }) {
     'Petrol or Diesel': t('common.petrolDiesel'),
     'Automatic': t('opt.automatic'),
     'Manual': t('opt.manual'),
+    'Semi-Automatic': t('opt.semiAutomatic'),
   };
   const toggleArrayValue = (key, value) => {
     const current = filters[key] || [];

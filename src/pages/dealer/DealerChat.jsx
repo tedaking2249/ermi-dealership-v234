@@ -4,6 +4,8 @@ import ChatWindow from '../../components/chat/ChatWindow';
 import './DealerChat.css';
 import '../../components/chat/ChatBadges.css';
 
+const DEALER_QUICK_REPLIES = ["It's available", 'Sure', 'If you are interested Call 0974382254'];
+
 function DealerChat() {
   const { conversations, chatLoading, chatError, unreadOf, getOrCreateConversation, markRead } = useChat();
   const [activeId, setActiveId] = useState(null);
@@ -64,6 +66,7 @@ function DealerChat() {
           {active ? (
             <ChatWindow
               conversationId={active.id}
+              quickReplies={DEALER_QUICK_REPLIES}
               conversationLabel={`${active.buyerName} — ${active.vehicleName}`}
             />
           ) : (

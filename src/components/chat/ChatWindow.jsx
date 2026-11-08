@@ -41,7 +41,7 @@ function sameDay(a, b) {
   return a.toDate().toDateString() === b.toDate().toDateString();
 }
 
-function ChatWindow({ conversationId, conversationLabel, onBack }) {
+function ChatWindow({ conversationId, conversationLabel, onBack, quickReplies = QUICK_REPLIES }) {
   const { user } = useAuth();
   const { conversations, sendMessage, sendVoiceMessage, markRead, unreadOf } = useChat();
   const { vehicles } = useVehicles();
@@ -188,7 +188,7 @@ function ChatWindow({ conversationId, conversationLabel, onBack }) {
       {voiceError && <p className="voice-error" role="alert">{voiceError}</p>}
 
       <div className="tg-quick-replies">
-        {QUICK_REPLIES.map((reply) => (
+        {quickReplies.map((reply) => (
           <button
             key={reply}
             type="button"

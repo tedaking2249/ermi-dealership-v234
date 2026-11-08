@@ -1,8 +1,8 @@
-﻿export const VEHICLE_TYPES = ['EV', 'Hybrid', 'Petrol or Diesel'];
+export const VEHICLE_TYPES = ['EV', 'Hybrid', 'Petrol or Diesel'];
 
 export const BODY_TYPES = ['Sedan', 'SUV', 'Hatchback', 'Pickup', 'Minivan', 'Other'];
 
-export const TRANSMISSIONS = ['Automatic', 'Manual'];
+export const TRANSMISSIONS = ['Automatic', 'Semi-Automatic', 'Manual'];
 
 export const DRIVETRAINS = ['FWD (Front-wheel)', 'RWD (Rear-wheel)', 'AWD (All-wheel)', '4WD (Four-wheel)'];
 

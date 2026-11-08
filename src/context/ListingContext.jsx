@@ -56,6 +56,7 @@ const toAppListing = (l) => {
     evRange: d.evRange || '',
     chargingInfo: d.chargingInfo || '',
     batteryCondition: d.batteryCondition || '',
+    vin: d.vin || '',
     features: d.features || [],
     majorIssues: d.majorIssues || [],
     photos: l.photos || [],

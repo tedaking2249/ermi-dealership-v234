@@ -1,11 +1,13 @@
 import { Link, useNavigate } from 'react-router-dom';
 import { useVehicles } from '../context/VehicleContext';
+import { useLanguage } from '../context/LanguageContext';
 import VehicleGrid from '../components/vehicle/VehicleGrid';
 import SearchBar from '../components/common/SearchBar';
 import './Home.css';
 
 function Home() {
   const navigate = useNavigate();
+  const { t } = useLanguage();
   const { vehicles } = useVehicles();
   const featuredVehicles = vehicles.filter((v) => v.featured);
 
@@ -21,22 +23,26 @@ function Home() {
     <div>
       <section className="hero">
         <div className="hero-content">
-          <h1>Find Your <span className="hero-highlight">Perfect Vehicle</span></h1>
-          <p>Quality used cars, trusted service, transparent pricing.</p>
+          <h1>
+            {t('heroBefore')}
+            <span className="hero-highlight">{t('heroHighlight')}</span>
+            {t('heroAfter')}
+          </h1>
+          <p>{t('heroSub')}</p>
           <SearchBar
             onSubmit={handleSearchSubmit}
-            placeholder="Search by make, model, or year..."
+            placeholder={t('searchPlaceholder')}
           />
           <Link to="/inventory" className="btn-primary hero-browse-link">
-            Browse Inventory
+            {t('browse')}
           </Link>
         </div>
       </section>
 
       <section className="featured-section">
         <div className="section-header">
-          <h2>Featured Vehicles</h2>
-          <Link to="/inventory">View All &rarr;</Link>
+          <h2>{t('featured')}</h2>
+          <Link to="/inventory">{t('viewAll')} &rarr;</Link>
         </div>
         <VehicleGrid vehicles={featuredVehicles} />
       </section>

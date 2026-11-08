@@ -109,6 +109,7 @@ function SellerSubmissions() {
                 {active.evRange && <div><span>EV Range</span><strong>{active.evRange}</strong></div>}
                 {active.chargingInfo && <div><span>Charging Info</span><strong>{active.chargingInfo}</strong></div>}
                 {active.batteryCondition && <div><span>Battery Condition</span><strong>{active.batteryCondition}</strong></div>}
+                {active.vin && <div><span>VIN</span><strong>{active.vin}</strong></div>}
               </div>
 
               {active.features?.length > 0 && (

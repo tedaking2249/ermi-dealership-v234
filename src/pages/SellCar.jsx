@@ -17,6 +17,7 @@ const emptyForm = {
   vehicleType: '',
   make: '', model: '', year: '', mileage: '', price: '',
   bodyType: '', transmission: '',
+  vin: '',
   hybridType: '', petrolRange: '', combinedRange: '',
   evRange: '', chargingInfo: '', batteryCondition: '',
   features: [], majorIssues: [],
@@ -50,6 +51,7 @@ const OPTION_TRANSLATION_KEYS = {
   Other: 'sell.option.other',
   Automatic: 'sell.option.automatic',
   Manual: 'sell.option.manual',
+  'Semi-Automatic': 'opt.semiAutomatic',
   'Mild Hybrid': 'sell.option.mildHybrid',
   'Full Hybrid': 'sell.option.fullHybrid',
   'Plug-in Hybrid': 'sell.option.plugInHybrid',
@@ -105,7 +107,7 @@ function SellCar() {
     const { name, value } = e.target;
     setForm((prev) => ({
       ...prev,
-      [name]: name === 'sellerPhone' ? sanitizePhoneInput(value) : value,
+      [name]: name === 'sellerPhone' ? sanitizePhoneInput(value) : name === 'vin' ? value.toUpperCase().replace(/[^A-Z0-9]/g, '') : value,
     }));
   };
 
@@ -200,6 +202,7 @@ function SellCar() {
     const submissionForm = {
       ...form,
       make: form.make === 'Other' ? customMake.trim() : form.make,
+      vin: form.vin.trim() || undefined,
     };
     const result = await submitListing(submissionForm, photos.map((p) => p.file));
     setSubmitting(false);
@@ -336,6 +339,11 @@ function SellCar() {
                     <option value="">{t('sell.select')}</option>
                     {TRANSMISSIONS.map((value) => <option key={value} value={value}>{translateOption(value)}</option>)}
                   </select>
+                </label>
+                <label>
+                  <span>{t('sell.vin')} <span className="sell-optional">({t('sell.optional')})</span></span>
+                  <input name="vin" value={form.vin} onChange={handleChange} placeholder={t('sell.vinPlaceholder')} maxLength={17} autoComplete="off" spellCheck={false} />
+                  <small>{t('sell.vinHint')}</small>
                 </label>
               </div>
             </section>
