@@ -1,13 +1,14 @@
 import { useState, useEffect, useRef } from 'react';
 import { Link, NavLink, useNavigate, useLocation } from 'react-router-dom';
 import {
-  IoCarSportOutline, IoHeartOutline, IoChatbubbleEllipsesOutline, IoChevronDown,
+  IoHeartOutline, IoChatbubbleEllipsesOutline, IoChevronDown,
 } from 'react-icons/io5';
 import { useAuth } from '../../context/AuthContext';
 import { useRequests } from '../../context/RequestContext';
 import { useChat } from '../../context/ChatContext';
 import { useFavorites } from '../../context/FavoritesContext';
 import { useLanguage } from '../../context/LanguageContext';
+import logo from '../../assets/logo.png';
 import './Navbar.css';
 
 const navClass = ({ isActive }) => `site-nav-link ${isActive ? 'active' : ''}`;
@@ -63,7 +64,7 @@ function Navbar() {
     <header className="site-header">
       <div className="site-header-inner">
         <Link to="/" className="site-logo" aria-label="Ermi Dealership home">
-          <span className="site-logo-mark"><IoCarSportOutline /></span>
+          <img src={logo} alt="" className="site-logo-img" />
           <span className="site-logo-text"><strong>Ermi</strong><span className="site-logo-sub"> Dealership</span></span>
         </Link>
 

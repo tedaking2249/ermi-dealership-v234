@@ -175,7 +175,7 @@ export const translations = {
   'sell.vinPlaceholder': 'ለምሳሌ 1HGCM82633A004352',
   'sell.vinHint': '17 ፊደል/ቁጥር፣ በዳሽቦርድ ወይም በሊብሬ ላይ ይገኛል',
     heroBefore: '',
-    heroHighlight: 'ፍጹም ተሽከርካሪዎን',
+    heroHighlight: 'ምርጥ ተሽከርካሪዎችን',
     heroAfter: ' ያግኙ',
     heroSub: 'ጥራት ያላቸው ያገለገሉ መኪኖች፣ የታመነ አገልግሎት፣ ግልጽ ዋጋ።',
     searchPlaceholder: 'በአምራች፣ በሞዴል ወይም በዓመት ይፈልጉ...',

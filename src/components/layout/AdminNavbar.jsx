@@ -5,6 +5,7 @@ import { useAuth } from '../../context/AuthContext';
 import { useRequests } from '../../context/RequestContext';
 import { useListings } from '../../context/ListingContext';
 import { useChat } from '../../context/ChatContext';
+import logo from '../../assets/logo.png';
 import './AdminNavbar.css';
 
 function AdminNavbar() {
@@ -34,6 +35,7 @@ function AdminNavbar() {
     <header className="admin-navbar">
       <div className="admin-navbar-container">
         <Link to="/dealer/dashboard" className="admin-navbar-logo" onClick={closeMenu}>
+          <img src={logo} alt="" className="admin-navbar-logo-img" />
           Ermi <span>Dealer Portal</span>
         </Link>
 
@@ -51,7 +53,10 @@ function AdminNavbar() {
           <Link to="/dealer/requests" onClick={() => { setActive('requests'); closeMenu(); }} className={activeItem === 'requests' ? 'active' : ''}>Requests</Link>
           <Link to="/dealer/chat" onClick={() => { setActive('chat'); closeMenu(); }} className={activeItem === 'chat' ? 'active' : ''}>Messages</Link>
           {user?.apiRole === 'ADMIN' && (
-            <Link to="/dealer/users" onClick={() => { setActive('users'); closeMenu(); }} className={activeItem === 'users' ? 'active' : ''}>Users</Link>
+            <>
+              <Link to="/dealer/users" onClick={() => { setActive('users'); closeMenu(); }} className={activeItem === 'users' ? 'active' : ''}>Users</Link>
+              <Link to="/dealer/analytics" onClick={() => { setActive('analytics'); closeMenu(); }} className={activeItem === 'analytics' ? 'active' : ''}>Analytics</Link>
+            </>
           )}
 
           <div className="admin-navbar-actions-mobile">
