@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { FiMenu, FiX } from 'react-icons/fi';
 import { useAuth } from '../../context/AuthContext';
@@ -6,6 +6,7 @@ import { useRequests } from '../../context/RequestContext';
 import { useListings } from '../../context/ListingContext';
 import { useChat } from '../../context/ChatContext';
 import logo from '../../assets/logo.png';
+import api from '../../services/api';
 import './AdminNavbar.css';
 
 function AdminNavbar() {
@@ -17,6 +18,21 @@ function AdminNavbar() {
   const navigate = useNavigate();
   const [menuOpen, setMenuOpen] = useState(false);
   const [activeItem, setActiveItem] = useState(null);
+  const [newNeeds, setNewNeeds] = useState(0);
+
+  // count of car requests still marked NEW (refreshes every minute and when the list changes)
+  useEffect(() => {
+    if (!user) return undefined;
+    let alive = true;
+    const load = () =>
+      api.get('/need-requests', { params: { status: 'NEW' } })
+        .then((r) => { if (alive) setNewNeeds((r.data.data || []).length); })
+        .catch(() => {});
+    load();
+    const id = setInterval(load, 60000);
+    window.addEventListener('ermi:needs-changed', load);
+    return () => { alive = false; clearInterval(id); window.removeEventListener('ermi:needs-changed', load); };
+  }, [user]);
 
   const handleLogout = () => {
     logout();
@@ -51,6 +67,12 @@ function AdminNavbar() {
           <Link to="/dealer/dashboard" onClick={() => { setActive('dashboard'); closeMenu(); }} className={activeItem === 'dashboard' ? 'active' : ''}>Dashboard</Link>
           <Link to="/dealer/submissions" onClick={() => { setActive('submissions'); closeMenu(); }} className={activeItem === 'submissions' ? 'active' : ''}>Submissions</Link>
           <Link to="/dealer/requests" onClick={() => { setActive('requests'); closeMenu(); }} className={activeItem === 'requests' ? 'active' : ''}>Requests</Link>
+          <Link to="/dealer/car-requests" onClick={() => { setActive('car-requests'); closeMenu(); }} className={activeItem === 'car-requests' ? 'active' : ''}>
+            Car requests
+            {newNeeds > 0 && (
+              <span style={{ marginInlineStart: 6, background: '#ef4444', color: '#fff', borderRadius: 99, fontSize: 11, fontWeight: 700, padding: '1px 7px' }}>{newNeeds}</span>
+            )}
+          </Link>
           <Link to="/dealer/chat" onClick={() => { setActive('chat'); closeMenu(); }} className={activeItem === 'chat' ? 'active' : ''}>Messages</Link>
           {user?.apiRole === 'ADMIN' && (
             <>

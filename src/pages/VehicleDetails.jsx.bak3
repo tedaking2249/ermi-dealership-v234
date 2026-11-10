@@ -1,0 +1,333 @@
+import { useParams, Link, useNavigate } from 'react-router-dom';
+import { useState, useEffect, useMemo } from 'react';
+import VehicleCard from '../components/vehicle/VehicleCard';
+import { FiPhone } from 'react-icons/fi';
+import { useVehicles } from '../context/VehicleContext';
+import { useAuth } from '../context/AuthContext';
+import { useChat } from '../context/ChatContext';
+import { useLanguage } from '../context/LanguageContext';
+import VehicleRequestForm from '../components/vehicle/VehicleRequestForm';
+import './VehicleDetails.css';
+import './VehicleDetailsExtra.css';
+
+// Rows are only shown when the car actually has a value for them
+function SpecGrid({ rows }) {
+  const visible = rows.filter(([, value]) => value !== undefined && value !== null && value !== '');
+  if (visible.length === 0) return null;
+  return (
+    <div className="vd-grid">
+      {visible.map(([label, value]) => (
+        <div className="vd-grid-item" key={label}>
+          <span className="vd-grid-label">{label}</span>
+          <span className="vd-grid-value">{value}</span>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function VehicleDetails() {
+  const { id } = useParams();
+  const { vehicles, loading, error } = useVehicles();
+  const { user } = useAuth();
+  const { getOrCreateConversation } = useChat();
+  const { t } = useLanguage();
+  const navigate = useNavigate();
+
+  // Vehicle ids are text now, so compare them as text
+  const vehicle = vehicles.find((v) => String(v.id) === id);
+  const [chatLoading, setChatLoading] = useState(false);
+  const [chatError, setChatError] = useState('');
+  const [activeAction, setActiveAction] = useState(null);
+  const [photoIndex, setPhotoIndex] = useState(0);
+
+  useEffect(() => {
+    if (activeAction) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [activeAction]);
+
+  if (!vehicle) {
+    if (loading) {
+      return (
+        <div className="vehicle-details-notfound">
+          <h1>Loading vehicle...</h1>
+        </div>
+      );
+    }
+
+    return (
+      <div className="vehicle-details-notfound">
+        <h1>Vehicle Not Found</h1>
+        <p>{error || "We couldn't find the vehicle you're looking for."}</p>
+        <Link to="/inventory" className="btn-primary">Back to Inventory</Link>
+      </div>
+    );
+  }
+
+  const handleChatClick = async () => {
+    if (!user) {
+      navigate('/login');
+      return;
+    }
+
+    setChatError('');
+    setChatLoading(true);
+
+    try {
+      const convoId = await getOrCreateConversation(vehicle);
+      navigate(`/chat/${convoId}`);
+    } catch (err) {
+      console.error('Chat error:', err);
+      setChatError(err.message || 'Could not open chat. Please try again.');
+    } finally {
+      setChatLoading(false);
+    }
+  };
+
+  const handleActionClick = (action) => {
+    if (!user) {
+      navigate('/login');
+      return;
+    }
+    setActiveAction((prev) => (prev === action ? null : action));
+  };
+
+  const photos = (vehicle.photos && vehicle.photos.length > 0
+    ? vehicle.photos
+    : [vehicle.image]
+  ).filter(Boolean);
+  const mainPhoto = photos[Math.min(photoIndex, Math.max(photos.length - 1, 0))] || '';
+
+  const isUnavailable = vehicle.status === 'RESERVED' || vehicle.status === 'SOLD';
+  const isStaff = user?.role === 'admin';
+
+  const hasPowertrain = [
+    vehicle.hybridType,
+    vehicle.petrolRange,
+    vehicle.combinedRange,
+    vehicle.evRange,
+    vehicle.chargingInfo,
+    vehicle.batteryCondition,
+  ].some(Boolean);
+
+  const features = Array.isArray(vehicle.features) ? vehicle.features : [];
+  const issues = Array.isArray(vehicle.majorIssues) ? vehicle.majorIssues : [];
+
+  const similarCars = useMemo(() => {
+    if (!vehicle || !Array.isArray(vehicles) || vehicles.length === 0) return [];
+    const currentPrice = Number(vehicle.price) || 0;
+    const minPrice = currentPrice * 0.8;
+    const maxPrice = currentPrice * 1.2;
+
+    return vehicles
+      .filter((v) => String(v.id) !== String(vehicle.id) && v.status !== 'SOLD')
+      .map((v) => {
+        let score = 0;
+        if (vehicle.fuelType && v.fuelType === vehicle.fuelType) score += 3;
+        if (vehicle.transmission && v.transmission === vehicle.transmission) score += 2;
+        if (vehicle.bodyType && v.bodyType === vehicle.bodyType) score += 2;
+        const candidatePrice = Number(v.price) || 0;
+        if (currentPrice > 0 && candidatePrice >= minPrice && candidatePrice <= maxPrice) score += 1;
+        return {
+          vehicle: v,
+          score,
+          priceDiff: Math.abs(candidatePrice - currentPrice),
+        };
+      })
+      .filter((item) => item.score > 0)
+      .sort((a, b) => b.score - a.score || a.priceDiff - b.priceDiff)
+      .slice(0, 4)
+      .map((item) => item.vehicle);
+  }, [vehicle, vehicles]);
+
+  return (
+    <div className="vd-page">
+      <div className="vehicle-details">
+        <div className="vehicle-details-image vd-gallery">
+          {mainPhoto ? (
+            <img src={mainPhoto} alt={`${vehicle.make} ${vehicle.model}`} />
+          ) : (
+            <div className="vd-no-photo">No photo available</div>
+          )}
+          {vehicle.status === 'SOLD' && <span className="vd-image-sold">{t('details.sold')}</span>}
+          {photos.length > 1 && (
+            <div className="vd-thumbs">
+              {photos.map((src, i) => (
+                <button
+                  type="button"
+                  key={`${src}-${i}`}
+                  className={`vd-thumb ${i === photoIndex ? 'active' : ''}`}
+                  onClick={() => setPhotoIndex(i)}
+                  aria-label={`Show photo ${i + 1}`}
+                >
+                  <img src={src} alt="" />
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
+
+        <div className="vehicle-details-info">
+          <h1>{vehicle.year} {vehicle.make} {vehicle.model}</h1>
+          {isUnavailable && (
+            <span className={`vd-status vd-status-${vehicle.status.toLowerCase()}`}>
+              {vehicle.status === 'SOLD' ? 'Sold' : 'Reserved'}
+            </span>
+          )}
+          {vehicle.status === 'SOLD' && (
+            <span className="vd-sold-out">{t('details.sold')}</span>
+          )}
+          <p className="vehicle-details-price">ETB {vehicle.price.toLocaleString()}</p>
+
+          <div className="vehicle-details-specs">
+            <div className="spec-item">
+              <span className="spec-label">Mileage</span>
+              <span className="spec-value">{vehicle.mileage.toLocaleString()} mi</span>
+            </div>
+            <div className="spec-item">
+              <span className="spec-label">Fuel Type</span>
+              <span className="spec-value">{vehicle.fuelType}</span>
+            </div>
+            <div className="spec-item">
+              <span className="spec-label">Transmission</span>
+              <span className="spec-value">{vehicle.transmission}</span>
+            </div>
+            <div className="spec-item">
+              <span className="spec-label">Year</span>
+              <span className="spec-value">{vehicle.year}</span>
+            </div>
+          </div>
+
+          {chatError && <p className="vehicle-details-chat-error">{chatError}</p>}
+
+          <div className="vehicle-details-actions">
+            {!isStaff && (
+              <>
+                <button
+                  className={`btn-primary ${activeAction === 'reserve' ? 'active-toggle' : ''}`}
+                  onClick={() => handleActionClick('reserve')}
+                  disabled={isUnavailable}
+                >
+                  {t('reserve.vehicle')}
+                </button>
+                <button
+                  className={`btn-secondary ${activeAction === 'testDrive' ? 'active-toggle' : ''}`}
+                  onClick={() => handleActionClick('testDrive')}
+                  disabled={isUnavailable}
+                >
+                  {t('book.test.drive')}
+                </button>
+              </>
+            )}
+            {!isStaff && (
+              <button className="btn-secondary" onClick={handleChatClick} disabled={chatLoading}>
+                {chatLoading ? 'Opening chat...' : t('chat.with.dealer')}
+              </button>
+            )}
+            <a className="btn-secondary vehicle-details-call" href="tel:0974382254">
+              <FiPhone /> {t('details.call')}
+            </a>
+          </div>
+
+          {isUnavailable && !isStaff && (
+            <p className="vd-note">
+              This vehicle is {vehicle.status === 'SOLD' ? 'sold' : 'currently reserved'}. You can still chat with the dealer about similar cars.
+            </p>
+          )}
+
+        </div>
+      </div>
+
+      <div className="vd-extra">
+        <section className="vd-section">
+          <h2>Vehicle Details</h2>
+          <SpecGrid
+            rows={[
+              ['Make', vehicle.make],
+              ['Model', vehicle.model],
+              ['Year', vehicle.year],
+              ['Mileage', `${vehicle.mileage.toLocaleString()} mi`],
+              ['Fuel Type', vehicle.fuelType],
+              ['Body Type', vehicle.bodyType],
+              ['Transmission', vehicle.transmission],
+              ['Color', vehicle.color],
+            ]}
+          />
+        </section>
+
+        {hasPowertrain && (
+          <section className="vd-section">
+            <h2>Powertrain &amp; Battery</h2>
+            <SpecGrid
+              rows={[
+                ['Hybrid Type', vehicle.hybridType],
+                ['Petrol Range', vehicle.petrolRange],
+                ['Combined Range', vehicle.combinedRange],
+                ['EV Range', vehicle.evRange],
+                ['Charging Info', vehicle.chargingInfo],
+                ['Battery Condition', vehicle.batteryCondition],
+              ]}
+            />
+          </section>
+        )}
+
+        {features.length > 0 && (
+          <section className="vd-section">
+            <h2>Features</h2>
+            <div className="vd-tags">
+              {features.map((f) => <span key={f} className="vd-tag">{f}</span>)}
+            </div>
+          </section>
+        )}
+
+        {issues.length > 0 && (
+          <section className="vd-section">
+            <h2>Known Issues</h2>
+            <div className="vd-tags">
+              {issues.map((m) => (
+                <span key={m} className={`vd-tag ${m === 'None known' ? 'vd-tag-good' : 'vd-tag-issue'}`}>
+                  {m}
+                </span>
+              ))}
+            </div>
+          </section>
+        )}
+
+        {vehicle.description && (
+          <section className="vd-section">
+            <h2>Description</h2>
+            <p className="vd-description">{vehicle.description}</p>
+          </section>
+        )}
+      {activeAction && !isStaff && (
+        <div className="vd-modal-backdrop" onClick={() => setActiveAction(null)}>
+          <div className="vd-modal" role="dialog" aria-modal="true" onClick={(e) => e.stopPropagation()}>
+            <button type="button" className="vd-modal-close" onClick={() => setActiveAction(null)} aria-label="Close form">
+              ×
+            </button>
+            <VehicleRequestForm vehicle={vehicle} type={activeAction} onDone={() => setActiveAction(null)} />
+          </div>
+        </div>
+      )}
+      {similarCars.length > 0 && (
+        <section className="vd-section vd-similar">
+          <h2>{t('details.similar')}</h2>
+          <div className="vd-similar-grid">
+            {similarCars.map((car) => (
+              <VehicleCard key={car.id} vehicle={car} />
+            ))}
+          </div>
+        </section>
+      )}
+    </div>
+    </div>
+  );
+}
+
+export default VehicleDetails;

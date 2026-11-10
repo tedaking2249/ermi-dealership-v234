@@ -174,5 +174,5 @@
 
 /* Dealership logo */
 .admin-navbar-logo { display: inline-flex; align-items: center; gap: 0.6rem; }
-.admin-navbar-logo-img { height: 38px; width: 38px; border-radius: 50%; object-fit: cover; display: block; flex-shrink: 0; }
-@media (max-width: 520px) { .admin-navbar-logo-img { height: 34px; width: 34px; } }
+.admin-navbar-logo-img { height: 52px; width: 52px; border-radius: 50%; object-fit: cover; display: block; flex-shrink: 0; }
+@media (max-width: 520px) { .admin-navbar-logo-img { height: 44px; width: 44px; } }

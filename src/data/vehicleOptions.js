@@ -26,5 +26,5 @@ export const FEATURE_OPTIONS = [
 ];
 
 export const MAJOR_ISSUE_OPTIONS = [
-  'None known', 'Engine', 'Transmission', 'Electrical', 'Body/Paint', 'Other',
+  'Not known', 'Chassis', 'Corner', 'Repainted', 'Engine fixed', 'Grill/accident', 'Other',
 ];

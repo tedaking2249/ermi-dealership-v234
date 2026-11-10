@@ -110,6 +110,17 @@ function SellerSubmissions() {
                 {active.chargingInfo && <div><span>Charging Info</span><strong>{active.chargingInfo}</strong></div>}
                 {active.batteryCondition && <div><span>Battery Condition</span><strong>{active.batteryCondition}</strong></div>}
                 {active.vin && <div><span>VIN</span><strong>{active.vin}</strong></div>}
+                {active.commissionAmount != null && (
+                  <div>
+                    <span>Commission offered</span>
+                    <strong>
+                      {active.commissionType === 'percent'
+                        ? `${active.commissionPercent}% (≈ ${Number(active.commissionAmount).toLocaleString()} ETB)`
+                        : `${Number(active.commissionAmount).toLocaleString()} ETB (${active.commissionPercent}%)`}
+                    </strong>
+                  </div>
+                )}
+                {active.exchangeAvailable && <div><span>Exchange</span><strong>Yes{active.exchangeCar ? `: ${active.exchangeCar}` : ''}</strong></div>}
               </div>
 
               {active.features?.length > 0 && (

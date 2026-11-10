@@ -5,6 +5,7 @@ import './VehicleForm.css';
 const emptyForm = {
   make: '', model: '', year: '', price: '', mileage: '',
   fuelType: 'Petrol or Diesel', transmission: 'Automatic', image: '', featured: false,
+  vin: '', exchangeAvailable: false, exchangeCar: '',
 };
 
 const normalizeFuelType = (value) => {
@@ -83,6 +84,9 @@ function VehicleForm({ initialData, onSubmit, onCancel }) {
       year: Number(form.year),
       price: Number(form.price),
       mileage: Number(form.mileage),
+      vin: (form.vin || '').trim(),
+      exchangeAvailable: !!form.exchangeAvailable,
+      exchangeCar: form.exchangeAvailable ? (form.exchangeCar || '').trim() : '',
     });
   };
 
@@ -121,9 +125,44 @@ function VehicleForm({ initialData, onSubmit, onCancel }) {
           Transmission
           <select name="transmission" value={form.transmission} onChange={handleChange}>
             <option value="Automatic">Automatic</option>
+            <option value="Semi-Automatic">Semi-Automatic</option>
             <option value="Manual">Manual</option>
           </select>
         </label>
+        <label>
+          VIN Number (optional)
+          <input
+            name="vin"
+            value={form.vin || ''}
+            maxLength={17}
+            placeholder="17 characters, optional"
+            onChange={(e) => setForm((prev) => ({ ...prev, vin: e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, '') }))}
+          />
+        </label>
+        <div className="vehicle-form-full">
+          <span>Exchange possible?</span>
+          <div style={{ display: 'flex', gap: '1.5rem', marginTop: 6 }}>
+            <label style={{ flexDirection: 'row', alignItems: 'center', gap: 6, display: 'flex' }}>
+              <input type="radio" name="exchangeAvailable" style={{ width: 'auto' }}
+                checked={!!form.exchangeAvailable}
+                onChange={() => setForm((prev) => ({ ...prev, exchangeAvailable: true }))} />
+              Yes
+            </label>
+            <label style={{ flexDirection: 'row', alignItems: 'center', gap: 6, display: 'flex' }}>
+              <input type="radio" name="exchangeAvailable" style={{ width: 'auto' }}
+                checked={!form.exchangeAvailable}
+                onChange={() => setForm((prev) => ({ ...prev, exchangeAvailable: false, exchangeCar: '' }))} />
+              No
+            </label>
+          </div>
+        </div>
+        {form.exchangeAvailable && (
+          <label className="vehicle-form-full">
+            Car accepted for exchange
+            <input name="exchangeCar" value={form.exchangeCar || ''} onChange={handleChange}
+              placeholder="e.g. Toyota Vitz 2012" required />
+          </label>
+        )}
         <label className="vehicle-form-full">
           Photo
           <input type="file" accept="image/jpeg,image/png,image/webp" onChange={handlePhotoChange} />

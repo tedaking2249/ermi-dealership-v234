@@ -5,6 +5,7 @@ import { useLanguage } from '../context/LanguageContext';
 import VehicleGrid from '../components/vehicle/VehicleGrid';
 import SearchBar from '../components/common/SearchBar';
 import FilterPanel from '../components/vehicle/FilterPanel';
+import NeedCarPrompt, { NeedCarInline, NeedCarLink } from '../components/need/NeedCarPrompt';
 import searchVehicles from '../utils/searchVehicles';
 import filterVehicles from '../utils/filterVehicles';
 import './Inventory.css';
@@ -62,19 +63,22 @@ function Inventory() {
 
   return (
     <div className="inventory-page">
+      <NeedCarPrompt />
       <div className="inventory-header">
         <h1>{t('inventory.title')}</h1>
         <SearchBar
           value={searchTerm}
           onChange={handleSearchChange}
           onSubmit={handleSearchChange}
-          placeholder="Search by make, model, or year..."
+          placeholder={t('searchPlaceholder')}
         />
         <p className="inventory-count">
           {results.length} of {vehicles.length} {t('inventory.count')}
           {searchTerm && ` matching "${searchTerm}"`}
         </p>
       </div>
+
+      <div style={{ textAlign: 'center', margin: '0 0 14px' }}><NeedCarLink /></div>
 
       <div className="inventory-layout">
         <FilterPanel
@@ -84,6 +88,7 @@ function Inventory() {
         />
         <div className="inventory-content">
           <VehicleGrid vehicles={results} />
+          {results.length === 0 && <NeedCarInline variant="empty" />}
         </div>
       </div>
     </div>

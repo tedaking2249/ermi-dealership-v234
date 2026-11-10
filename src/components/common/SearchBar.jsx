@@ -1,8 +1,10 @@
 import { useState, useEffect } from 'react';
 import { FiSearch, FiX } from 'react-icons/fi';
+import { useLanguage } from '../../context/LanguageContext';
 import './SearchBar.css';
 
 function SearchBar({ value, onChange, onSubmit, placeholder = 'Search vehicles...' }) {
+  const { t } = useLanguage();
   const [term, setTerm] = useState(value || '');
 
   useEffect(() => {
@@ -45,7 +47,7 @@ function SearchBar({ value, onChange, onSubmit, placeholder = 'Search vehicles..
           <FiX />
         </button>
       )}
-      <button type="submit" className="search-bar-submit">Search</button>
+      <button type="submit" className="search-bar-submit">{t('searchButton')}</button>
     </form>
   );
 }

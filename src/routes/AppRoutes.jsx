@@ -18,6 +18,7 @@ import DealerRequests from '../pages/dealer/DealerRequests';
 import DealerVehiclePreview from '../pages/dealer/DealerVehiclePreview';
 import AdminUsers from '../pages/dealer/AdminUsers';
 import Analytics from '../pages/dealer/Analytics';
+import CarRequests from '../pages/dealer/CarRequests';
 import ProtectedRoute from '../components/auth/ProtectedRoute';
 import NotFound from '../pages/NotFound';
 function AppRoutes() {
@@ -129,6 +130,14 @@ function AppRoutes() {
         element={
           <ProtectedRoute allowedRoles={['admin']}>
             <Analytics />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/dealer/car-requests"
+        element={
+          <ProtectedRoute allowedRoles={['admin']}>
+            <CarRequests />
           </ProtectedRoute>
         }
       />

@@ -184,6 +184,12 @@ function VehicleDetails() {
             <span className="vd-sold-out">{t('details.sold')}</span>
           )}
           <p className="vehicle-details-price">ETB {vehicle.price.toLocaleString()}</p>
+          {vehicle.exchangeAvailable && (
+            <p className="vd-note" style={{ background: 'var(--color-primary-light, #eaf1ff)', borderRadius: 10, padding: '8px 12px' }}>
+              <strong>{t('details.exchangeYes')}</strong>
+              {vehicle.exchangeCar ? ` — ${t('details.exchangeFor')}: ${vehicle.exchangeCar}` : ''}
+            </p>
+          )}
 
           <div className="vehicle-details-specs">
             <div className="spec-item">
@@ -257,6 +263,8 @@ function VehicleDetails() {
               ['Body Type', vehicle.bodyType],
               ['Transmission', vehicle.transmission],
               ['Color', vehicle.color],
+              [t('details.vin'), vehicle.vin],
+              [t('details.exchange'), vehicle.exchangeAvailable ? (vehicle.exchangeCar ? `${t('details.exchangeYes')}: ${vehicle.exchangeCar}` : t('details.exchangeYes')) : ''],
             ]}
           />
         </section>
@@ -291,7 +299,7 @@ function VehicleDetails() {
             <h2>Known Issues</h2>
             <div className="vd-tags">
               {issues.map((m) => (
-                <span key={m} className={`vd-tag ${m === 'None known' ? 'vd-tag-good' : 'vd-tag-issue'}`}>
+                <span key={m} className={`vd-tag ${(m === 'None known' || m === 'Not known') ? 'vd-tag-good' : 'vd-tag-issue'}`}>
                   {m}
                 </span>
               ))}

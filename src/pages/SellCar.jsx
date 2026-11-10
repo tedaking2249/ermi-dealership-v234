@@ -1,3 +1,4 @@
+import { IoCarSportOutline } from 'react-icons/io5';
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import {
@@ -11,6 +12,7 @@ import {
   VEHICLE_TYPES, BODY_TYPES, TRANSMISSIONS,
   HYBRID_TYPES, FEATURE_OPTIONS, MAJOR_ISSUE_OPTIONS,
 } from '../data/vehicleOptions';
+import CommissionModal from '../components/sell/CommissionModal';
 import './SellCar.css';
 
 const emptyForm = {
@@ -18,6 +20,7 @@ const emptyForm = {
   make: '', model: '', year: '', mileage: '', price: '',
   bodyType: '', transmission: '',
   vin: '',
+  exchangeAvailable: false, exchangeCar: '', otherIssue: '',
   hybridType: '', petrolRange: '', combinedRange: '',
   evRange: '', chargingInfo: '', batteryCondition: '',
   features: [], majorIssues: [],
@@ -65,6 +68,12 @@ const OPTION_TRANSLATION_KEYS = {
   'Parking Sensors': 'sell.option.parkingSensors',
   'Reverse Camera': 'sell.option.reverseCamera',
   'None known': 'sell.option.noneKnown',
+  'Not known': 'sell.option.notKnown',
+  Chassis: 'sell.option.chassis',
+  Corner: 'sell.option.corner',
+  Repainted: 'sell.option.repainted',
+  'Engine fixed': 'sell.option.engineFixed',
+  'Grill/accident': 'sell.option.grillAccident',
   Engine: 'sell.option.engine',
   Transmission: 'sell.option.transmission',
   Electrical: 'sell.option.electrical',
@@ -87,6 +96,7 @@ function SellCar() {
   const [error, setError] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  const [showCommission, setShowCommission] = useState(false);
 
   const isEV = form.vehicleType === 'EV';
   const isHybrid = form.vehicleType === 'Hybrid';
@@ -127,9 +137,13 @@ function SellCar() {
   const toggleChip = (key, value) => {
     setForm((prev) => {
       const current = prev[key];
-      const updated = current.includes(value)
+      let updated = current.includes(value)
         ? current.filter((v) => v !== value)
         : [...current, value];
+      // "Not known" cannot be combined with real issues
+      if (key === 'majorIssues' && !current.includes(value)) {
+        updated = value === 'Not known' ? ['Not known'] : updated.filter((v) => v !== 'Not known');
+      }
       return { ...prev, [key]: updated };
     });
   };
@@ -192,20 +206,42 @@ function SellCar() {
       setError(t('sell.error.make'));
       return;
     }
+    if (form.majorIssues.includes('Other') && !form.otherIssue.trim()) {
+      setError(t('sell.error.otherIssue'));
+      return;
+    }
+    if (form.exchangeAvailable && !form.exchangeCar.trim()) {
+      setError(t('sell.error.exchangeCar'));
+      return;
+    }
     if (photos.length === 0) {
       setError(t('sell.error.photoRequired'));
       return;
     }
 
     setError('');
+    setShowCommission(true);
+  };
+
+  // runs after the seller answers the commission question
+  const sendListing = async (commission) => {
+    if (submitting) return;
     setSubmitting(true);
     const submissionForm = {
       ...form,
       make: form.make === 'Other' ? customMake.trim() : form.make,
       vin: form.vin.trim() || undefined,
+      exchangeAvailable: !!form.exchangeAvailable,
+      exchangeCar: form.exchangeAvailable ? form.exchangeCar.trim() : undefined,
+      majorIssues: form.majorIssues.map((m) => (m === 'Other' ? form.otherIssue.trim() : m)),
+      otherIssue: undefined,
+      commissionType: commission.type,
+      commissionPercent: commission.percent,
+      commissionAmount: commission.amount,
     };
     const result = await submitListing(submissionForm, photos.map((p) => p.file));
     setSubmitting(false);
+    setShowCommission(false);
 
     if (result.success) {
       setSubmitted(true);
@@ -219,7 +255,7 @@ function SellCar() {
       <div className="sell-page">
         <div className="sell-success">
           <h1 className="sell-hero-title">
-            <FiCar className="sell-hero-icon" /> {t('sell.title')}
+            <IoCarSportOutline className="sell-hero-icon" /> {t('sell.title')}
           </h1>
           <p>{t('sell.signInPrompt')}</p>
           <Link to="/login" className="btn-primary">{t('sell.signInButton')}</Link>
@@ -345,6 +381,30 @@ function SellCar() {
                   <input name="vin" value={form.vin} onChange={handleChange} placeholder={t('sell.vinPlaceholder')} maxLength={17} autoComplete="off" spellCheck={false} />
                   <small>{t('sell.vinHint')}</small>
                 </label>
+                <div style={{ gridColumn: '1 / -1' }}>
+                  <span style={{ display: 'block', fontWeight: 600, marginBottom: 6 }}>{t('sell.exchange')}</span>
+                  <div style={{ display: 'flex', gap: '1.5rem' }}>
+                    <label style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+                      <input type="radio" name="exchangeAvailable" style={{ width: 'auto' }}
+                        checked={form.exchangeAvailable}
+                        onChange={() => setForm((prev) => ({ ...prev, exchangeAvailable: true }))} />
+                      {t('sell.yes')}
+                    </label>
+                    <label style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+                      <input type="radio" name="exchangeAvailable" style={{ width: 'auto' }}
+                        checked={!form.exchangeAvailable}
+                        onChange={() => setForm((prev) => ({ ...prev, exchangeAvailable: false, exchangeCar: '' }))} />
+                      {t('sell.no')}
+                    </label>
+                  </div>
+                </div>
+                {form.exchangeAvailable && (
+                  <label style={{ gridColumn: '1 / -1' }}>
+                    {t('sell.exchangeCar')}
+                    <input name="exchangeCar" value={form.exchangeCar} onChange={handleChange}
+                      placeholder={t('sell.exchangeCarPlaceholder')} maxLength={120} required />
+                  </label>
+                )}
               </div>
             </section>
 
@@ -428,6 +488,13 @@ function SellCar() {
                   </button>
                 ))}
               </div>
+              {form.majorIssues.includes('Other') && (
+                <label style={{ display: 'block', marginTop: 12 }}>
+                  {t('sell.otherIssue')}
+                  <input name="otherIssue" value={form.otherIssue} onChange={handleChange}
+                    placeholder={t('sell.otherIssuePlaceholder')} maxLength={150} required />
+                </label>
+              )}
             </section>
 
             <section className="sell-section">
@@ -483,6 +550,14 @@ function SellCar() {
           </>
         )}
       </form>
+      {showCommission && (
+        <CommissionModal
+          price={Number(form.price) || 0}
+          busy={submitting}
+          onCancel={() => !submitting && setShowCommission(false)}
+          onConfirm={sendListing}
+        />
+      )}
     </div>
   );
 }
