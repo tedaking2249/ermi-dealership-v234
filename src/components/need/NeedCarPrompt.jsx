@@ -6,8 +6,7 @@ import NeedCarForm, { DONE_KEY } from './NeedCarForm';
 import './need.css';
 
 const OPEN_EVENT = 'ermi:open-need-form';
-const DISMISS_KEY = 'ermi_need_dismissed';
-const QUIET_DAYS = 3;
+const QUIET_DAYS = 0;
 
 export const openNeedForm = () => window.dispatchEvent(new Event(OPEN_EVENT));
 
@@ -24,9 +23,7 @@ export default function NeedCarPrompt() {
   const L = NEED_TEXT[lang === 'am' ? 'am' : 'en'];
   const [open, setOpen] = useState(false);
   const [nudge, setNudge] = useState(false);
-  const [hidden, setHidden] = useState(() => {
-    try { return sessionStorage.getItem(DISMISS_KEY) === '1'; } catch { return false; }
-  });
+  const [hidden, setHidden] = useState(false);
 
   useEffect(() => {
     const on = () => setOpen(true);
@@ -54,7 +51,6 @@ export default function NeedCarPrompt() {
 
   const dismiss = useCallback(() => {
     setNudge(false); setHidden(true);
-    try { sessionStorage.setItem(DISMISS_KEY, '1'); } catch { /* ignore */ }
   }, []);
 
   return (

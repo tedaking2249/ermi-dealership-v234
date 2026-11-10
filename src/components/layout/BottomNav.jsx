@@ -3,7 +3,7 @@ import { Link, NavLink, useLocation, useNavigate } from 'react-router-dom';
 import {
   IoCarSportOutline, IoHeartOutline, IoChatbubbleEllipsesOutline, IoGridOutline, IoAdd,
   IoHomeOutline, IoDocumentTextOutline, IoInformationCircleOutline, IoCallOutline,
-  IoLogOutOutline, IoLogInOutline, IoCloseOutline, IoSearchOutline,
+  IoLogOutOutline, IoLogInOutline, IoCloseOutline, IoSearchOutline, IoPeopleOutline,
 } from 'react-icons/io5';
 import { useAuth } from '../../context/AuthContext';
 import { useRequests } from '../../context/RequestContext';
@@ -90,6 +90,7 @@ function BottomNav() {
 
             <Link to="/"><IoHomeOutline /> {t('nav.home')}</Link>
             <Link to="/google-my-car"><IoSearchOutline /> {t('google.mycar')}</Link>
+            <Link to="/customer-requests"><IoPeopleOutline /> {t('nav.customerRequests')}</Link>
             {user && (
               <Link to="/my-requests">
                 <IoDocumentTextOutline /> {t('nav.requests')}

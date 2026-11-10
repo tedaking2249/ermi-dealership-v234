@@ -1,0 +1,268 @@
+import { useEffect, useMemo, useState } from 'react';
+import {
+  FiPhone, FiMessageCircle, FiX, FiSearch, FiZap, FiClock, FiChevronLeft, FiChevronRight, FiCheckCircle,
+} from 'react-icons/fi';
+import { IoCarSportOutline } from 'react-icons/io5';
+import api from '../services/api';
+import { useLanguage } from '../context/LanguageContext';
+import { OPT, labelOf } from '../i18n/needForm';
+import NeedCarForm from '../components/need/NeedCarForm';
+import './CustomerRequests.css';
+
+const PHONE = '0974382254';
+const WA = '251974382254';
+
+const TEXT = {
+  en: {
+    title: 'Customer Requests',
+    sub: 'Cars our customers are looking for right now. Have one? Contact Ermi and we will connect you with the buyer.',
+    how1: 'Browse the requests', how2: 'Contact Ermi if you have the car', how3: 'We connect you with the buyer',
+    search: 'Search by make or model',
+    fAll: 'All', fUrgent: 'High demand', fReady: 'Ready to buy',
+    anyYear: 'Any year', etb: 'ETB', upTo: 'Up to', noBudget: 'Budget is open',
+    haveIt: 'I have this car', call: 'Call', details: 'Details',
+    urgent: 'High demand', ready: 'Ready to buy', photos: 'photos',
+    matters: 'Important to the buyer', note: 'Note from Ermi', posted: 'Posted',
+    today: 'today', yesterday: 'yesterday', daysAgo: (n) => `${n} days ago`,
+    emptyT: 'No open requests right now', emptyS: 'New requests appear here as customers tell us what they need.',
+    noMatch: 'No requests match your search.',
+    ctaT: 'Looking for a car yourself?', ctaS: "Can't find it in our inventory? Tell us and we will find it.", ctaBtn: 'Tell us what you need',
+    err: 'Could not load requests.', retry: 'Try again', close: 'Close', contactTitle: 'Do you have this car?',
+    contactSub: 'Contact Ermi and we will connect you with the buyer.',
+    msg: (t, id) => `Hello Ermi, I have a ${t} that matches a customer request (#${id}).`,
+    spec: { transmission: 'Transmission', fuel: 'Fuel', body: 'Body type', budget: 'Budget', year: 'Year' },
+  },
+  am: {
+    title: 'የደንበኞች ጥያቄዎች',
+    sub: 'ደንበኞቻችን አሁን የሚፈልጓቸው መኪኖች። አለዎት? ኤርሚን ያግኙ፤ ከገዢው ጋር እናገናኝዎታለን።',
+    how1: 'ጥያቄዎችን ይመልከቱ', how2: 'መኪናው ካለዎት ኤርሚን ያግኙ', how3: 'ከገዢው ጋር እናገናኝዎታለን',
+    search: 'በብራንድ ወይም ሞዴል ይፈልጉ',
+    fAll: 'ሁሉም', fUrgent: 'ከፍተኛ ፍላጎት', fReady: 'ለመግዛት ዝግጁ',
+    anyYear: 'ማንኛውም ዓመት', etb: 'ብር', upTo: 'እስከ', noBudget: 'በጀት አልተወሰነም',
+    haveIt: 'ይህ መኪና አለኝ', call: 'ደውል', details: 'ዝርዝር',
+    urgent: 'ከፍተኛ ፍላጎት', ready: 'ለመግዛት ዝግጁ', photos: 'ፎቶዎች',
+    matters: 'ለገዢው አስፈላጊ', note: 'ከኤርሚ መልእክት', posted: 'የተለጠፈው',
+    today: 'ዛሬ', yesterday: 'ትናንት', daysAgo: (n) => `ከ${n} ቀን በፊት`,
+    emptyT: 'አሁን ክፍት ጥያቄ የለም', emptyS: 'ደንበኞች የሚፈልጉትን ሲነግሩን አዳዲስ ጥያቄዎች እዚህ ይታያሉ።',
+    noMatch: 'ከፍለጋዎ ጋር የሚመሳሰል ጥያቄ የለም።',
+    ctaT: 'እርስዎም መኪና ይፈልጋሉ?', ctaS: 'በመኪኖቻችን ውስጥ አላገኙም? ይንገሩን፤ እናፈላልግልዎታለን።', ctaBtn: 'የሚፈልጉትን ይንገሩን',
+    err: 'ጥያቄዎችን መጫን አልተቻለም።', retry: 'እንደገና ሞክር', close: 'ዝጋ', contactTitle: 'ይህ መኪና አለዎት?',
+    contactSub: 'ኤርሚን ያግኙ፤ ከገዢው ጋር እናገናኝዎታለን።',
+    msg: (t, id) => `ሰላም ኤርሚ፣ ከደንበኛ ጥያቄ (#${id}) ጋር የሚመሳሰል ${t} አለኝ።`,
+    spec: { transmission: 'ማርሽ', fuel: 'ነዳጅ', body: 'የመኪና አይነት', budget: 'በጀት', year: 'ዓመት' },
+  },
+};
+
+const base = () => api.defaults.baseURL || '';
+const photoUrl = (id, i) => `${base()}/need-requests/public/${id}/photo/${i}`;
+const titleOf = (r, L) => `${r.year ? `${r.year} ` : ''}${r.make} ${r.model}`.trim() || L.anyYear;
+const fmtBudget = (n) => (n >= 1e6 ? `${(n / 1e6).toFixed(n % 1e6 ? 1 : 0)}M` : Number(n).toLocaleString('en-US'));
+
+function ago(iso, L) {
+  const d = Math.floor((Date.now() - new Date(iso).getTime()) / 864e5);
+  if (d <= 0) return L.today;
+  if (d === 1) return L.yesterday;
+  return L.daysAgo(d);
+}
+
+function tagsOf(r, lg) {
+  return [
+    r.transmission && labelOf(OPT.transmission, r.transmission, lg),
+    r.fuel && labelOf(OPT.fuel, r.fuel, lg),
+    r.body && labelOf(OPT.body, r.body, lg),
+  ].filter(Boolean);
+}
+
+function Cover({ r, size }) {
+  const [failed, setFailed] = useState(false);
+  if (r.photoCount > 0 && !failed) {
+    return <img className="cr-cover-img" src={photoUrl(r.id, 0)} alt="" loading="lazy" onError={() => setFailed(true)} data-size={size} />;
+  }
+  return <div className="cr-cover-empty"><IoCarSportOutline /></div>;
+}
+
+function ContactButtons({ r, L }) {
+  const msg = L.msg(titleOf(r, L), r.id.slice(-6));
+  return (
+    <>
+      <a className="cr-btn cr-btn-wa" href={`https://wa.me/${WA}?text=${encodeURIComponent(msg)}`} target="_blank" rel="noreferrer" onClick={(e) => e.stopPropagation()}>
+        <FiMessageCircle /> {L.haveIt}
+      </a>
+      <a className="cr-btn" href={`tel:${PHONE}`} onClick={(e) => e.stopPropagation()}><FiPhone /> {L.call}</a>
+    </>
+  );
+}
+
+function DetailModal({ r, L, lg, onClose }) {
+  const [i, setI] = useState(0);
+  const n = r.photoCount || 0;
+  useEffect(() => {
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    const onKey = (e) => {
+      if (e.key === 'Escape') onClose();
+      if (e.key === 'ArrowRight' && n > 1) setI((x) => (x + 1) % n);
+      if (e.key === 'ArrowLeft' && n > 1) setI((x) => (x - 1 + n) % n);
+    };
+    window.addEventListener('keydown', onKey);
+    return () => { document.body.style.overflow = prev; window.removeEventListener('keydown', onKey); };
+  }, [onClose, n]);
+
+  const specs = [
+    [L.spec.year, r.year || L.anyYear],
+    [L.spec.transmission, r.transmission && labelOf(OPT.transmission, r.transmission, lg)],
+    [L.spec.fuel, r.fuel && labelOf(OPT.fuel, r.fuel, lg)],
+    [L.spec.body, r.body && labelOf(OPT.body, r.body, lg)],
+    [L.spec.budget, r.budget ? `${L.upTo} ${fmtBudget(r.budget)} ${L.etb}` : L.noBudget],
+  ].filter(([, v]) => v);
+
+  return (
+    <div className="cr-backdrop" onMouseDown={(e) => e.target === e.currentTarget && onClose()}>
+      <div className="cr-modal" role="dialog" aria-modal="true">
+        <button type="button" className="cr-modal-x" onClick={onClose} aria-label={L.close}><FiX /></button>
+        <div className="cr-gallery">
+          {n > 0 ? <img src={photoUrl(r.id, i)} alt="" /> : <div className="cr-cover-empty"><IoCarSportOutline /></div>}
+          {n > 1 && (
+            <>
+              <button type="button" className="cr-nav cr-prev" onClick={() => setI((i - 1 + n) % n)} aria-label="Previous"><FiChevronLeft /></button>
+              <button type="button" className="cr-nav cr-next" onClick={() => setI((i + 1) % n)} aria-label="Next"><FiChevronRight /></button>
+              <span className="cr-count">{i + 1} / {n}</span>
+            </>
+          )}
+        </div>
+        <div className="cr-modal-body">
+          <div className="cr-badges">
+            {r.urgent && <span className="cr-badge cr-badge-hot"><FiZap /> {L.urgent}</span>}
+            {r.readyToBuy && <span className="cr-badge cr-badge-ok"><FiCheckCircle /> {L.ready}</span>}
+          </div>
+          <h2>{titleOf(r, L)}</h2>
+          <p className="cr-posted"><FiClock /> {L.posted} {ago(r.publishedAt, L)}</p>
+          <div className="cr-specs">
+            {specs.map(([k, v]) => <div key={k}><span>{k}</span><strong>{v}</strong></div>)}
+          </div>
+          {(r.priorities || []).length > 0 && (
+            <div className="cr-block">
+              <h3>{L.matters}</h3>
+              <div className="cr-tags">{r.priorities.map((p) => <span key={p} className="cr-tag">{labelOf(OPT.matters, p, lg)}</span>)}</div>
+            </div>
+          )}
+          {r.publicNote && <div className="cr-note"><strong>{L.note}</strong><p>{r.publicNote}</p></div>}
+          <div className="cr-contact">
+            <h3>{L.contactTitle}</h3>
+            <p>{L.contactSub}</p>
+            <div className="cr-actions"><ContactButtons r={r} L={L} /></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export default function CustomerRequests() {
+  const { lang } = useLanguage();
+  const lg = lang === 'am' ? 'am' : 'en';
+  const L = TEXT[lg];
+
+  const [rows, setRows] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
+  const [query, setQuery] = useState('');
+  const [filter, setFilter] = useState('all');
+  const [active, setActive] = useState(null);
+  const [formOpen, setFormOpen] = useState(false);
+
+  const load = () => {
+    setLoading(true); setError(false);
+    api.get('/need-requests/public')
+      .then((res) => setRows(res.data.data || []))
+      .catch(() => setError(true))
+      .finally(() => setLoading(false));
+  };
+  useEffect(load, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const shown = useMemo(() => {
+    const q = query.trim().toLowerCase();
+    return rows.filter((r) => {
+      if (filter === 'urgent' && !r.urgent) return false;
+      if (filter === 'ready' && !r.readyToBuy) return false;
+      if (!q) return true;
+      return `${r.make} ${r.model} ${r.year || ''}`.toLowerCase().includes(q);
+    });
+  }, [rows, query, filter]);
+
+  return (
+    <div className="cr-page">
+      <header className="cr-hero">
+        <h1>{L.title}</h1>
+        <p>{L.sub}</p>
+        <ol className="cr-how">
+          <li><span>1</span>{L.how1}</li>
+          <li><span>2</span>{L.how2}</li>
+          <li><span>3</span>{L.how3}</li>
+        </ol>
+      </header>
+
+      <div className="cr-toolbar">
+        <label className="cr-search">
+          <FiSearch />
+          <input value={query} onChange={(e) => setQuery(e.target.value)} placeholder={L.search} aria-label={L.search} />
+        </label>
+        <div className="cr-filters">
+          {[['all', L.fAll], ['urgent', L.fUrgent], ['ready', L.fReady]].map(([k, label]) => (
+            <button type="button" key={k} className={filter === k ? 'on' : ''} onClick={() => setFilter(k)}>{label}</button>
+          ))}
+        </div>
+      </div>
+
+      {loading && (
+        <div className="cr-grid">{[0, 1, 2].map((k) => <div key={k} className="cr-card cr-skeleton" />)}</div>
+      )}
+
+      {!loading && error && (
+        <div className="cr-empty"><p>{L.err}</p><button type="button" className="cr-btn" onClick={load}>{L.retry}</button></div>
+      )}
+
+      {!loading && !error && rows.length === 0 && (
+        <div className="cr-empty"><IoCarSportOutline /><h3>{L.emptyT}</h3><p>{L.emptyS}</p></div>
+      )}
+
+      {!loading && !error && rows.length > 0 && shown.length === 0 && (
+        <div className="cr-empty"><p>{L.noMatch}</p></div>
+      )}
+
+      {!loading && !error && shown.length > 0 && (
+        <div className="cr-grid">
+          {shown.map((r) => (
+            <article className="cr-card" key={r.id} onClick={() => setActive(r)} tabIndex={0}
+              onKeyDown={(e) => e.key === 'Enter' && setActive(r)}>
+              <div className="cr-cover">
+                <Cover r={r} />
+                <div className="cr-badges cr-badges-abs">
+                  {r.urgent && <span className="cr-badge cr-badge-hot"><FiZap /> {L.urgent}</span>}
+                  {r.readyToBuy && <span className="cr-badge cr-badge-ok"><FiCheckCircle /> {L.ready}</span>}
+                </div>
+                {r.photoCount > 1 && <span className="cr-count">{r.photoCount} {L.photos}</span>}
+              </div>
+              <div className="cr-card-body">
+                <h3>{titleOf(r, L)}</h3>
+                <p className="cr-budget">{r.budget ? `${L.upTo} ${fmtBudget(r.budget)} ${L.etb}` : L.noBudget}</p>
+                <div className="cr-tags">{tagsOf(r, lg).map((tg) => <span key={tg} className="cr-tag">{tg}</span>)}</div>
+                {r.publicNote && <p className="cr-card-note">{r.publicNote}</p>}
+                <p className="cr-posted"><FiClock /> {L.posted} {ago(r.publishedAt, L)}</p>
+                <div className="cr-actions"><ContactButtons r={r} L={L} /></div>
+              </div>
+            </article>
+          ))}
+        </div>
+      )}
+
+      <section className="cr-cta">
+        <div><h3>{L.ctaT}</h3><p>{L.ctaS}</p></div>
+        <button type="button" className="btn-primary" onClick={() => setFormOpen(true)}>{L.ctaBtn}</button>
+      </section>
+
+      {active && <DetailModal r={active} L={L} lg={lg} onClose={() => setActive(null)} />}
+      {formOpen && <NeedCarForm onClose={() => setFormOpen(false)} />}
+    </div>
+  );
+}

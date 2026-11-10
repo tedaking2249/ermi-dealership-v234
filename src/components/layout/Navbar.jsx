@@ -72,6 +72,7 @@ function Navbar() {
           <NavLink to="/inventory" className={navClass}>{t('nav.inventory')}</NavLink>
           {!isStaff && <NavLink to="/sell" className={navClass}>{t('nav.sell')}</NavLink>}
           <NavLink to="/google-my-car" className={navClass}>{t('google.mycar')}</NavLink>
+          <NavLink to="/customer-requests" className={(state) => `${navClass(state)} site-nav-link-desktop`}>{t('nav.customerRequests')}</NavLink>
         </nav>
 
         <div className="site-spacer" />

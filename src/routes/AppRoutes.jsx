@@ -19,6 +19,7 @@ import DealerVehiclePreview from '../pages/dealer/DealerVehiclePreview';
 import AdminUsers from '../pages/dealer/AdminUsers';
 import Analytics from '../pages/dealer/Analytics';
 import CarRequests from '../pages/dealer/CarRequests';
+import CustomerRequests from '../pages/CustomerRequests';
 import ProtectedRoute from '../components/auth/ProtectedRoute';
 import NotFound from '../pages/NotFound';
 function AppRoutes() {
@@ -141,6 +142,7 @@ function AppRoutes() {
           </ProtectedRoute>
         }
       />
+      <Route path="/customer-requests" element={<CustomerRequests />} />
       <Route path="*" element={<NotFound />} />
     </Routes>
   );

@@ -1,0 +1,280 @@
+.site-header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background-color: var(--white);
+  border-bottom: 1px solid var(--ln);
+}
+
+.site-header-inner {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  height: 56px;
+  padding: 0 var(--spacing-md);
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+}
+
+.site-logo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--navy);
+  font-size: 1.1rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  white-space: nowrap;
+}
+
+.site-logo-mark {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  background-color: var(--pri);
+  color: #fff;
+  font-size: 1rem;
+}
+
+.site-logo-text strong {
+  font-weight: 800;
+  color: var(--navy);
+}
+
+.site-logo-sub {
+  color: var(--pri);
+  font-weight: 600;
+}
+
+/* Desktop links are hidden on phones, where the bottom tab bar takes over */
+.site-nav {
+  display: none;
+  align-items: center;
+  gap: 4px;
+}
+
+.site-nav-link {
+  padding: 7px 11px;
+  border-radius: 8px;
+  color: var(--sub);
+  font-size: 12.5px;
+  font-weight: 700;
+  transition: background-color var(--transition), color var(--transition);
+}
+
+.site-nav-link:hover {
+  color: var(--pri-d);
+  background-color: var(--soft);
+}
+
+.site-nav-link.active {
+  background-color: var(--soft);
+  color: var(--pri-d);
+}
+
+.site-spacer {
+  flex: 1;
+}
+
+.site-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+}
+
+.site-icon-btn {
+  position: relative;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  color: var(--ink);
+  font-size: 1.4rem;
+}
+
+.site-icon-btn:hover {
+  background-color: var(--soft);
+}
+
+.site-badge {
+  position: absolute;
+  top: 0;
+  right: 0;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
+  border-radius: 999px;
+  background-color: var(--red-rec);
+  color: #fff;
+  font-size: 0.68rem;
+  font-weight: 700;
+  line-height: 18px;
+  text-align: center;
+}
+
+.site-badge-soft {
+  background-color: var(--pri);
+}
+
+.site-badge-inline {
+  position: static;
+  margin-left: auto;
+}
+
+.site-login {
+  padding: 8px 16px;
+  border-radius: 10px;
+  background-color: var(--pri);
+  color: #fff;
+  font-size: var(--font-size-sm);
+  font-weight: 700;
+  border: none;
+  cursor: pointer;
+  transition: background-color var(--transition);
+}
+
+.site-login:hover {
+  background-color: var(--pri-d);
+}
+
+.site-account {
+  position: relative;
+}
+
+.site-account-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px;
+  border: none;
+  border-radius: 999px;
+  background: none;
+  color: var(--ink);
+  font-family: inherit;
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.site-account-btn:hover {
+  background-color: var(--soft);
+}
+
+.site-avatar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background-color: var(--pri);
+  color: #fff;
+  font-weight: 800;
+}
+
+.site-account-name,
+.site-account-caret {
+  display: none;
+}
+
+.site-menu {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  min-width: 220px;
+  padding: 6px;
+  border: 1px solid var(--ln);
+  border-radius: 14px;
+  background-color: var(--white);
+  box-shadow: var(--shadow-lg);
+  display: flex;
+  flex-direction: column;
+}
+
+.site-menu-user {
+  margin: 0;
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--ln);
+  font-size: var(--font-size-sm);
+  font-weight: 700;
+  color: var(--ink);
+}
+
+.site-menu a,
+.site-menu button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 12px;
+  border: none;
+  border-radius: 8px;
+  background: none;
+  color: var(--ink);
+  font-family: inherit;
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  text-align: left;
+  cursor: pointer;
+}
+
+.site-menu a:hover,
+.site-menu button:hover {
+  background-color: var(--soft);
+}
+
+.site-menu-logout {
+  color: var(--err) !important;
+  font-weight: 600 !important;
+}
+
+.site-lang-btn {
+  border: 1px solid var(--ln);
+  background: var(--white);
+  color: var(--sub);
+  border-radius: 8px;
+  padding: 6px 12px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color var(--transition), border-color var(--transition);
+}
+
+.site-lang-btn:hover {
+  background: var(--soft);
+  border-color: var(--pri);
+}
+
+@media (min-width: 860px) {
+  .site-header-inner {
+    height: 56px;
+    padding: 0 var(--spacing-lg);
+  }
+
+  .site-nav {
+    display: flex;
+    margin-left: var(--spacing-lg);
+  }
+
+  .site-icon-btn {
+    display: flex;
+  }
+
+  .site-account-name,
+  .site-account-caret {
+    display: inline;
+  }
+
+  .site-account-btn {
+    padding: 4px 10px 4px 4px;
+  }
+}
+
+/* Dealership logo */
+.site-logo { display: inline-flex; align-items: center; gap: 0.6rem; }
+.site-logo-img { height: 56px; width: 56px; border-radius: 50%; object-fit: cover; display: block; flex-shrink: 0; }
+@media (max-width: 520px) { .site-logo-img { height: 46px; width: 46px; } }

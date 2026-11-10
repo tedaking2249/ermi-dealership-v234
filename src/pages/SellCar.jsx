@@ -21,6 +21,7 @@ const emptyForm = {
   bodyType: '', transmission: '',
   vin: '',
   exchangeAvailable: false, exchangeCar: '', otherIssue: '',
+  heardFrom: '', heardOther: '',
   hybridType: '', petrolRange: '', combinedRange: '',
   evRange: '', chargingInfo: '', batteryCondition: '',
   features: [], majorIssues: [],
@@ -41,6 +42,18 @@ const MAKE_OPTIONS = {
 
 const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
 const MAX_PHOTO_BYTES = 5 * 1024 * 1024;
+
+// [stored value, translation key]
+const HEARD_OPTIONS = [
+  ['TikTok', 'sell.heard.tiktok'],
+  ['Telegram', 'sell.heard.telegram'],
+  ['Facebook', 'sell.heard.facebook'],
+  ['Instagram', 'sell.heard.instagram'],
+  ['YouTube', 'sell.heard.youtube'],
+  ['Friend or family', 'sell.heard.friend'],
+  ['Google search', 'sell.heard.google'],
+  ['Other', 'sell.heard.other'],
+];
 
 const OPTION_TRANSLATION_KEYS = {
   EV: 'sell.option.ev',
@@ -235,6 +248,8 @@ function SellCar() {
       exchangeCar: form.exchangeAvailable ? form.exchangeCar.trim() : undefined,
       majorIssues: form.majorIssues.map((m) => (m === 'Other' ? form.otherIssue.trim() : m)),
       otherIssue: undefined,
+      heardFrom: form.heardFrom === 'Other' ? (form.heardOther.trim() || 'Other') : (form.heardFrom || undefined),
+      heardOther: undefined,
       commissionType: commission.type,
       commissionPercent: commission.percent,
       commissionAmount: commission.amount,
@@ -541,6 +556,27 @@ function SellCar() {
                   <span className="label-with-icon"><FiPhone /> {t('sell.phoneNumber')}</span>
                   <input type="tel" name="sellerPhone" value={form.sellerPhone} onChange={handleChange} placeholder={t('sell.phonePlaceholder')} maxLength={10} inputMode="numeric" pattern="^(09|07)\d{8}$" required />
                 </label>
+              </div>
+            </section>
+
+            <section className="sell-section">
+              <div className="sell-section-title">
+                <span className="sell-step-badge">8</span>
+                <h2>{t('sell.heardFrom')} <span className="sell-optional">({t('sell.optional')})</span></h2>
+              </div>
+              <div className="sell-grid">
+                <label>
+                  <select name="heardFrom" value={form.heardFrom} onChange={handleChange} aria-label={t('sell.heardFrom')}>
+                    <option value="">{t('sell.select')}</option>
+                    {HEARD_OPTIONS.map(([value, key]) => <option key={value} value={value}>{t(key)}</option>)}
+                  </select>
+                </label>
+                {form.heardFrom === 'Other' && (
+                  <label>
+                    {t('sell.heardOther')}
+                    <input name="heardOther" value={form.heardOther} onChange={handleChange} maxLength={80} />
+                  </label>
+                )}
               </div>
             </section>
 

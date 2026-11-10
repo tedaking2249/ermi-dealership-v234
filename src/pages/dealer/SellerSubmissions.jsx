@@ -110,6 +110,7 @@ function SellerSubmissions() {
                 {active.chargingInfo && <div><span>Charging Info</span><strong>{active.chargingInfo}</strong></div>}
                 {active.batteryCondition && <div><span>Battery Condition</span><strong>{active.batteryCondition}</strong></div>}
                 {active.vin && <div><span>VIN</span><strong>{active.vin}</strong></div>}
+                {active.heardFrom && <div><span>Heard about us</span><strong>{active.heardFrom}</strong></div>}
                 {active.commissionAmount != null && (
                   <div>
                     <span>Commission offered</span>
