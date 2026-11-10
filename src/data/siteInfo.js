@@ -23,10 +23,11 @@ export const siteInfo = {
 
   // Links open in a new tab. Leave '' to hide.
   social: {
-    Telegram: '',
-    WhatsApp: '',
-    Facebook: '',
+    Telegram: 'https://t.me/Tewahidoapk',
+    WhatsApp: 'https://wa.me/251974382254?text=Hello%20Ermi%20Dealership%2C%20I%20am%20interested%20in%20a%20car.',
+    Facebook: 'https://www.facebook.com/profile.php?id=61589252265594',
     Instagram: '',
-    TikTok: '',
+    TikTok: 'https://www.tiktok.com/@ermiya55',
+    Call: 'tel:0974382254',
   },
 };

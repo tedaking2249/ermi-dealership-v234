@@ -1,0 +1,413 @@
+import { useEffect, useMemo, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
+import {
+  FiX, FiClock, FiTarget, FiZap, FiBookOpen, FiEye, FiShield, FiPlus,
+  FiCheckCircle, FiChevronDown, FiCheck,
+} from 'react-icons/fi';
+import api from '../../services/api';
+import { useLanguage } from '../../context/LanguageContext';
+import { NEED_TEXT, OPT, labelOf } from '../../i18n/needForm';
+import './need.css';
+
+const DRAFT_KEY = 'ermi_need_draft';
+export const DONE_KEY = 'ermi_need_done';
+
+const THIS_YEAR = new Date().getFullYear();
+const YEARS = Array.from({ length: THIS_YEAR - 1999 }, (_, i) => String(THIS_YEAR - i));
+const BUDGET_MIN = 2000000, BUDGET_MAX = 25000000, BUDGET_STEP = 100000;
+
+const EMPTY = {
+  name: '', phone: '', contactMethod: '', consent: false,
+  make: '', model: '', year: '', transmission: '', fuel: '', body: '', payment: '',
+  budget: null, priorities: [], intention: '',
+  photos: [], brokerExperience: '', brokerFeedback: '', source: '',
+  improvements: [], notes: '', website: '',
+};
+
+const phoneOk = (p) => /^(\+?251|0)?[79]\d{8}$/.test(String(p).replace(/[\s-]/g, ''));
+const fmt = (n) => Number(n).toLocaleString('en-US');
+
+function loadDraft() {
+  try {
+    const d = JSON.parse(localStorage.getItem(DRAFT_KEY) || 'null');
+    return d ? { ...EMPTY, ...d, photos: [], website: '' } : EMPTY;
+  } catch { return EMPTY; }
+}
+
+async function compress(file) {
+  const bmp = await createImageBitmap(file);
+  const s = Math.min(1, 720 / Math.max(bmp.width, bmp.height));
+  const c = document.createElement('canvas');
+  c.width = Math.round(bmp.width * s); c.height = Math.round(bmp.height * s);
+  c.getContext('2d').drawImage(bmp, 0, 0, c.width, c.height);
+  return c.toDataURL('image/jpeg', 0.6);
+}
+
+function Select({ value, onChange, list, lang, placeholder, id }) {
+  return (
+    <div className="nf-select">
+      <select id={id} value={value} onChange={(e) => onChange(e.target.value)}>
+        <option value="">{placeholder}</option>
+        {list.map((r) => <option key={r[0]} value={r[0]}>{lang === 'am' ? r[2] : r[1]}</option>)}
+      </select>
+      <FiChevronDown aria-hidden />
+    </div>
+  );
+}
+
+function MultiSelect({ values, onChange, list, lang, placeholder, max, summary }) {
+  const [open, setOpen] = useState(false);
+  const toggle = (v) => {
+    if (values.includes(v)) onChange(values.filter((x) => x !== v));
+    else if (!max || values.length < max) onChange([...values, v]);
+  };
+  return (
+    <div className="nf-multi">
+      <button type="button" className="nf-select-btn" onClick={() => setOpen((o) => !o)} aria-expanded={open}>
+        <span className={values.length ? '' : 'nf-ph'}>{values.length ? summary(values.length) : placeholder}</span>
+        <FiChevronDown aria-hidden style={{ transform: open ? 'rotate(180deg)' : 'none' }} />
+      </button>
+      {open && (
+        <div className="nf-multi-panel">
+          {list.map((r) => {
+            const on = values.includes(r[0]);
+            const lock = !on && max && values.length >= max;
+            return (
+              <button type="button" key={r[0]} className={`nf-check-row${on ? ' on' : ''}`} disabled={lock} onClick={() => toggle(r[0])}>
+                <span className="nf-box">{on && <FiCheck />}</span>
+                {lang === 'am' ? r[2] : r[1]}
+              </button>
+            );
+          })}
+        </div>
+      )}
+    </div>
+  );
+}
+
+function Radios({ value, onChange, list, lang }) {
+  return (
+    <div className="nf-radios" role="radiogroup">
+      {list.map((r) => (
+        <button type="button" role="radio" aria-checked={value === r[0]} key={r[0]}
+          className={`nf-radio${value === r[0] ? ' on' : ''}`} onClick={() => onChange(r[0])}>
+          <span className="nf-dot" />{lang === 'am' ? r[2] : r[1]}
+        </button>
+      ))}
+    </div>
+  );
+}
+
+export default function NeedCarForm({ onClose }) {
+  const { lang } = useLanguage();
+  const L = NEED_TEXT[lang === 'am' ? 'am' : 'en'];
+  const lg = lang === 'am' ? 'am' : 'en';
+
+  const [form, setForm] = useState(loadDraft);
+  const [step, setStep] = useState(0); // 0 intro,1 contact,2 car,3 intent,4 last,5 improve,6 review,7 done
+  const [errors, setErrors] = useState({});
+  const [sending, setSending] = useState(false);
+  const [sendErr, setSendErr] = useState('');
+  const [note, setNote] = useState('');
+  const bodyRef = useRef(null);
+
+  const set = (k, v) => { setForm((f) => ({ ...f, [k]: v })); setErrors((e) => ({ ...e, [k]: undefined })); };
+
+  useEffect(() => {
+    try { const { photos, website, ...rest } = form; localStorage.setItem(DRAFT_KEY, JSON.stringify(rest)); } catch { /* ignore */ }
+  }, [form]);
+  useEffect(() => {
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    const onKey = (e) => e.key === 'Escape' && onClose();
+    window.addEventListener('keydown', onKey);
+    return () => { document.body.style.overflow = prev; window.removeEventListener('keydown', onKey); };
+  }, [onClose]);
+  useEffect(() => { bodyRef.current?.scrollTo({ top: 0 }); }, [step]);
+
+  const validate = (s) => {
+    const e = {};
+    if (s === 1) {
+      if (form.name.trim().length < 2) e.name = L.errName;
+      if (!phoneOk(form.phone)) e.phone = L.errPhone;
+      if (!form.contactMethod) e.contactMethod = L.errContact;
+      if (!form.consent) e.consent = L.errConsent;
+    }
+    if (s === 2) {
+      if (!form.make) e.make = L.errMake;
+      if (!form.model.trim()) e.model = L.errModel;
+      if (!form.payment) e.payment = L.errPay;
+    }
+    if (s === 3 && !form.intention) e.intention = L.errIntent;
+    setErrors(e);
+    return Object.keys(e).length === 0;
+  };
+
+  const next = () => { if (validate(step)) setStep((s) => s + 1); };
+  const back = () => setStep((s) => Math.max(0, s - 1));
+
+  const addPhotos = async (files) => {
+    const room = 2 - form.photos.length;
+    const out = [];
+    for (const f of Array.from(files).slice(0, room)) {
+      try { out.push(await compress(f)); } catch { /* skip unreadable */ }
+    }
+    if (out.length) set('photos', [...form.photos, ...out]);
+  };
+
+  const submit = async () => {
+    setSending(true); setSendErr(''); setNote('');
+    const payload = { ...form, lang: lg, budget: form.budget || null };
+    try {
+      try {
+        await api.post('/need-requests', payload);
+      } catch (err) {
+        if (err?.response?.status === 413 && form.photos.length) {
+          await api.post('/need-requests', { ...payload, photos: [] });
+          setNote(L.photoNote);
+        } else throw err;
+      }
+      try { localStorage.removeItem(DRAFT_KEY); localStorage.setItem(DONE_KEY, String(Date.now())); } catch { /* ignore */ }
+      setStep(7);
+    } catch {
+      setSendErr(L.errSend);
+    } finally { setSending(false); }
+  };
+
+  const progress = step >= 2 && step <= 5 ? (step - 1) * 25 : step === 6 ? 100 : 0;
+  const L2 = (list, v) => labelOf(list, v, lg);
+  const budgetVal = form.budget ?? BUDGET_MIN;
+  const budgetPct = ((budgetVal - BUDGET_MIN) / (BUDGET_MAX - BUDGET_MIN)) * 100;
+
+  const reviewRows = useMemo(() => ([
+    [L.rContact, [
+      [L.fullName, form.name], [L.phone, form.phone], [L.contactHow, L2(OPT.contact, form.contactMethod)],
+    ], 1],
+    [L.rCar, [
+      [L.make, form.make], [L.model, form.model], [L.year, form.year], [L.transmission, L2(OPT.transmission, form.transmission)],
+      [L.fuel, L2(OPT.fuel, form.fuel)], [L.body, L2(OPT.body, form.body)], [L.pay, L2(OPT.pay, form.payment)],
+      [L.budget, form.budget ? `${fmt(form.budget)} ${L.etb}` : ''],
+      [L.matters, form.priorities.map((p) => L2(OPT.matters, p)).join(', ')],
+      [L.s2t, L2(OPT.intent, form.intention)],
+    ], 2],
+    [L.rOther, [
+      [L.broker, L2(OPT.broker, form.brokerExperience)], [L.brokerDo, form.brokerFeedback], [L.heard, L2(OPT.heard, form.source)],
+      [L.helpMost, form.improvements.map((p) => L2(OPT.improve, p)).join(', ')], [L.more, form.notes],
+    ], 4],
+  ]), [form, lg]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const err = (k) => errors[k] && <p className="nf-err" role="alert">{errors[k]}</p>;
+
+  return createPortal(
+    <div className="nf-overlay" role="dialog" aria-modal="true" aria-label={L.promptTitle}
+      onMouseDown={(e) => e.target === e.currentTarget && onClose()}>
+      <div className="nf-dialog">
+        <button type="button" className="nf-close" onClick={onClose} aria-label={L.close}><FiX /></button>
+
+        {progress > 0 && step <= 5 && (
+          <div className="nf-progress">
+            <div className="nf-progress-top"><span>{L.stepOf(step - 1)}</span><span>{progress}%</span></div>
+            <div className="nf-bar"><i style={{ width: `${progress}%` }} /></div>
+            <div className="nf-encourage">{L.encourage[step - 2]}</div>
+          </div>
+        )}
+
+        <div className="nf-body" ref={bodyRef}>
+          <input className="nf-hp" tabIndex={-1} autoComplete="off" aria-hidden
+            value={form.website} onChange={(e) => set('website', e.target.value)} />
+
+          {step === 0 && (
+            <section>
+              <h2 className="nf-h">{L.introTitle}</h2>
+              <p className="nf-p">{L.introP1}</p>
+              <p className="nf-p">{L.introP2}</p>
+              <span className="nf-pill"><FiClock /> {L.takes}</span>
+              <div className="nf-values">
+                {[[FiTarget, 'v1'], [FiZap, 'v2'], [FiBookOpen, 'v3'], [FiEye, 'v4']].map(([Icon, k]) => (
+                  <div className="nf-value" key={k}><Icon /><strong>{L[`${k}t`]}</strong><span>{L[`${k}d`]}</span></div>
+                ))}
+              </div>
+            </section>
+          )}
+
+          {step === 1 && (
+            <section>
+              <div className="nf-kicker">{L.before}</div>
+              <h2 className="nf-h">{L.aboutYou}</h2>
+              <p className="nf-sub">{L.aboutYouSub}</p>
+              <label className="nf-label" htmlFor="nf-name">{L.fullName} <b>*</b></label>
+              <input id="nf-name" className="nf-input" value={form.name} placeholder={L.fullNamePh} autoComplete="name"
+                onChange={(e) => set('name', e.target.value)} />
+              {err('name')}
+              <label className="nf-label" htmlFor="nf-phone">{L.phone} <b>*</b></label>
+              <input id="nf-phone" className="nf-input" value={form.phone} placeholder={L.phonePh} inputMode="tel" autoComplete="tel"
+                onChange={(e) => set('phone', e.target.value)} />
+              {err('phone')}
+              <div className="nf-label">{L.contactHow} <b>*</b></div>
+              <Radios value={form.contactMethod} onChange={(v) => set('contactMethod', v)} list={OPT.contact} lang={lg} />
+              {err('contactMethod')}
+              <button type="button" className={`nf-consent${form.consent ? ' on' : ''}`} onClick={() => set('consent', !form.consent)}>
+                <span className="nf-box">{form.consent && <FiCheck />}</span>{L.consent}
+              </button>
+              {err('consent')}
+              <p className="nf-privacy"><FiShield /> {L.privacy}</p>
+            </section>
+          )}
+
+          {step === 2 && (
+            <section>
+              <div className="nf-kicker">{L.s1}</div>
+              <h2 className="nf-h">{L.s1t}</h2>
+              <p className="nf-sub">{L.s1sub}</p>
+              <div className="nf-label">{L.make} <b>*</b></div>
+              <div className="nf-chips">
+                {OPT.makeChips.map((m) => (
+                  <button type="button" key={m} className={`nf-chip${form.make === m ? ' on' : ''}`} onClick={() => set('make', m)}>{m}</button>
+                ))}
+              </div>
+              <Select value={form.make} onChange={(v) => set('make', v)} list={OPT.makes} lang={lg} placeholder={L.makeSel} />
+              {err('make')}
+              <label className="nf-label" htmlFor="nf-model">{L.model} <b>*</b></label>
+              <input id="nf-model" className="nf-input" value={form.model} placeholder={L.modelPh} onChange={(e) => set('model', e.target.value)} />
+              {err('model')}
+              <div className="nf-grid2">
+                <div><div className="nf-label">{L.year}</div>
+                  <Select value={form.year} onChange={(v) => set('year', v)} list={YEARS.map((y) => [y, y, y])} lang={lg} placeholder={L.select} /></div>
+                <div><div className="nf-label">{L.transmission}</div>
+                  <Select value={form.transmission} onChange={(v) => set('transmission', v)} list={OPT.transmission} lang={lg} placeholder={L.select} /></div>
+                <div><div className="nf-label">{L.fuel}</div>
+                  <Select value={form.fuel} onChange={(v) => set('fuel', v)} list={OPT.fuel} lang={lg} placeholder={L.select} /></div>
+                <div><div className="nf-label">{L.body}</div>
+                  <Select value={form.body} onChange={(v) => set('body', v)} list={OPT.body} lang={lg} placeholder={L.select} /></div>
+              </div>
+              <div className="nf-label">{L.pay} <b>*</b></div>
+              <Select value={form.payment} onChange={(v) => set('payment', v)} list={OPT.pay} lang={lg} placeholder={L.select} />
+              {err('payment')}
+              <div className="nf-label">{L.budget}</div>
+              <div className="nf-budget">
+                <div className="nf-budget-val">
+                  {form.budget ? `${fmt(form.budget)}${form.budget >= BUDGET_MAX ? '+' : ''} ${L.etb}` : L.slide}
+                </div>
+                <input type="range" min={BUDGET_MIN} max={BUDGET_MAX} step={BUDGET_STEP} value={budgetVal}
+                  style={{ '--pct': `${form.budget ? budgetPct : 0}%` }}
+                  onChange={(e) => set('budget', Number(e.target.value))} aria-label={L.budget} />
+                <div className="nf-budget-range"><span>{fmt(BUDGET_MIN)}</span><span>{fmt(BUDGET_MAX)}+</span></div>
+                <div className="nf-chips">
+                  {[3, 5, 8, 12, 18].map((m) => (
+                    <button type="button" key={m} className={`nf-chip${form.budget === m * 1e6 ? ' on' : ''}`} onClick={() => set('budget', m * 1e6)}>{m}M</button>
+                  ))}
+                  {form.budget && <button type="button" className="nf-chip nf-chip-ghost" onClick={() => set('budget', null)}>{L.clearBudget}</button>}
+                </div>
+              </div>
+              <div className="nf-label">{L.matters}</div>
+              <MultiSelect values={form.priorities} onChange={(v) => set('priorities', v)} list={OPT.matters} lang={lg}
+                placeholder={L.upTo3} max={3} summary={L.selected} />
+            </section>
+          )}
+
+          {step === 3 && (
+            <section>
+              <div className="nf-kicker">{L.s2}</div>
+              <h2 className="nf-h">{L.s2t}</h2>
+              <Radios value={form.intention} onChange={(v) => set('intention', v)} list={OPT.intent} lang={lg} />
+              {err('intention')}
+            </section>
+          )}
+
+          {step === 4 && (
+            <section>
+              <div className="nf-kicker">{L.s3}</div>
+              <h2 className="nf-h">{L.s3t}</h2>
+              <p className="nf-sub">{L.s3sub}</p>
+              <div className="nf-label">{L.photo}</div>
+              <div className="nf-photos">
+                {form.photos.map((p, i) => (
+                  <div className="nf-photo" key={i}>
+                    <img src={p} alt="" />
+                    <button type="button" aria-label={L.remove} onClick={() => set('photos', form.photos.filter((_, j) => j !== i))}><FiX /></button>
+                  </div>
+                ))}
+                {form.photos.length < 2 && (
+                  <label className="nf-photo nf-photo-add">
+                    <FiPlus /><span>{L.addPhotos}</span>
+                    <input type="file" accept="image/*" multiple hidden onChange={(e) => { addPhotos(e.target.files); e.target.value = ''; }} />
+                  </label>
+                )}
+              </div>
+              <div className="nf-label">{L.broker}</div>
+              <Select value={form.brokerExperience} onChange={(v) => set('brokerExperience', v)} list={OPT.broker} lang={lg} placeholder={L.select} />
+              <label className="nf-label" htmlFor="nf-bf">{L.brokerDo}</label>
+              <input id="nf-bf" className="nf-input" maxLength={200} value={form.brokerFeedback} placeholder={L.brokerPh}
+                onChange={(e) => set('brokerFeedback', e.target.value)} />
+              <div className="nf-label">{L.heard}</div>
+              <Select value={form.source} onChange={(v) => set('source', v)} list={OPT.heard} lang={lg} placeholder={L.select} />
+            </section>
+          )}
+
+          {step === 5 && (
+            <section>
+              <div className="nf-kicker">{L.s4}</div>
+              <h2 className="nf-h">{L.s4t}</h2>
+              <p className="nf-sub">{L.s4sub}</p>
+              <div className="nf-label">{L.helpMost}</div>
+              <MultiSelect values={form.improvements} onChange={(v) => set('improvements', v)} list={OPT.improve} lang={lg}
+                placeholder={L.selAll} summary={L.selected} />
+              <label className="nf-label" htmlFor="nf-notes">{L.more}</label>
+              <textarea id="nf-notes" className="nf-input nf-ta" rows={4} maxLength={1000} value={form.notes}
+                placeholder={L.morePh} onChange={(e) => set('notes', e.target.value)} />
+            </section>
+          )}
+
+          {step === 6 && (
+            <section>
+              <h2 className="nf-h">{L.reviewT}</h2>
+              <p className="nf-sub">{L.reviewSub}</p>
+              {reviewRows.map(([title, rows, editStep]) => (
+                <div className="nf-review" key={title}>
+                  <div className="nf-review-head"><strong>{title}</strong>
+                    <button type="button" onClick={() => setStep(editStep)}>{L.edit}</button></div>
+                  {rows.filter(([, v]) => v).map(([k, v]) => (
+                    <div className="nf-review-row" key={k}><span>{k}</span><b>{v}</b></div>
+                  ))}
+                  {form.photos.length > 0 && title === L.rOther && (
+                    <div className="nf-review-photos">{form.photos.map((p, i) => <img key={i} src={p} alt="" />)}</div>
+                  )}
+                </div>
+              ))}
+              {sendErr && <p className="nf-err" role="alert">{sendErr}</p>}
+            </section>
+          )}
+
+          {step === 7 && (
+            <section className="nf-done">
+              <FiCheckCircle />
+              <h2 className="nf-h">{L.doneT}</h2>
+              <p className="nf-p">{L.doneP}</p>
+              {note && <p className="nf-sub">{note}</p>}
+            </section>
+          )}
+        </div>
+
+        <div className="nf-foot">
+          {step === 0 && <button type="button" className="nf-btn nf-btn-primary nf-full" onClick={() => setStep(1)}>{L.start}</button>}
+          {step >= 1 && step <= 5 && (
+            <>
+              <button type="button" className="nf-btn" onClick={back}>{L.back}</button>
+              <button type="button" className="nf-btn nf-btn-primary" onClick={step === 5 ? () => setStep(6) : next}>
+                {step === 1 ? L.cont : step === 5 ? L.review : L.next}
+              </button>
+            </>
+          )}
+          {step === 6 && (
+            <>
+              <button type="button" className="nf-btn" onClick={back} disabled={sending}>{L.back}</button>
+              <button type="button" className="nf-btn nf-btn-primary" onClick={submit} disabled={sending}>{sending ? L.sending : L.submit}</button>
+            </>
+          )}
+          {step === 7 && <button type="button" className="nf-btn nf-btn-primary nf-full" onClick={onClose}>{L.doneBtn}</button>}
+        </div>
+      </div>
+    </div>,
+    document.body,
+  );
+}

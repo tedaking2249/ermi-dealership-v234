@@ -109,6 +109,7 @@ export default function NeedCarForm({ onClose }) {
   const [sending, setSending] = useState(false);
   const [sendErr, setSendErr] = useState('');
   const [note, setNote] = useState('');
+  const [comm, setComm] = useState({ type: '', amount: '' });
   const bodyRef = useRef(null);
 
   const set = (k, v) => { setForm((f) => ({ ...f, [k]: v })); setErrors((e) => ({ ...e, [k]: undefined })); };
@@ -139,6 +140,7 @@ export default function NeedCarForm({ onClose }) {
       if (!form.payment) e.payment = L.errPay;
     }
     if (s === 3 && !form.intention) e.intention = L.errIntent;
+    if (s === 6 && (!comm.type || (comm.type === 'OTHER' && !(Number(comm.amount) > 0)))) e.comm = L.errComm;
     setErrors(e);
     return Object.keys(e).length === 0;
   };
@@ -156,8 +158,16 @@ export default function NeedCarForm({ onClose }) {
   };
 
   const submit = async () => {
+    if (!comm.type || (comm.type === 'OTHER' && !(Number(comm.amount) > 0))) {
+      setErrors((e) => ({ ...e, comm: L.errComm }));
+      return;
+    }
     setSending(true); setSendErr(''); setNote('');
-    const payload = { ...form, lang: lg, budget: form.budget || null };
+    const payload = {
+      ...form, lang: lg, budget: form.budget || null,
+      commissionType: comm.type,
+      commissionAmount: comm.type === 'OTHER' ? Number(comm.amount) : null,
+    };
     try {
       try {
         await api.post('/need-requests', payload);
@@ -168,13 +178,13 @@ export default function NeedCarForm({ onClose }) {
         } else throw err;
       }
       try { localStorage.removeItem(DRAFT_KEY); localStorage.setItem(DONE_KEY, String(Date.now())); } catch { /* ignore */ }
-      setStep(7);
+      setStep(8);
     } catch {
       setSendErr(L.errSend);
     } finally { setSending(false); }
   };
 
-  const progress = step >= 2 && step <= 5 ? (step - 1) * 25 : step === 6 ? 100 : 0;
+  const progress = step >= 2 && step <= 5 ? (step - 1) * 25 : step === 7 ? 100 : 0;
   const L2 = (list, v) => labelOf(list, v, lg);
   const budgetVal = form.budget ?? BUDGET_MIN;
   const budgetPct = ((budgetVal - BUDGET_MIN) / (BUDGET_MAX - BUDGET_MIN)) * 100;
@@ -359,6 +369,28 @@ export default function NeedCarForm({ onClose }) {
           )}
 
           {step === 6 && (
+            <section className="nf-comm-step">
+              <h2 className="nf-h">{L.commT}</h2>
+              <p className="nf-sub">{L.commSub}</p>
+              <div className="nf-chips">
+                <button type="button" className={`nf-chip${comm.type === 'PERCENT' ? ' on' : ''}`}
+                  onClick={() => { setComm({ type: 'PERCENT', amount: '' }); setErrors((e) => ({ ...e, comm: undefined })); }}>{L.comm2}</button>
+                <button type="button" className={`nf-chip${comm.type === 'OTHER' ? ' on' : ''}`}
+                  onClick={() => { setComm((c) => ({ ...c, type: 'OTHER' })); setErrors((e) => ({ ...e, comm: undefined })); }}>{L.commOther}</button>
+              </div>
+              {comm.type === 'OTHER' && (
+                <div className="nf-comm-amt">
+                  <input className="nf-input" inputMode="numeric" placeholder={L.commPh}
+                    value={comm.amount ? fmt(comm.amount) : ''}
+                    onChange={(e) => setComm({ type: 'OTHER', amount: e.target.value.replace(/\D/g, '').slice(0, 9) })} />
+                  <span>{L.etb}</span>
+                </div>
+              )}
+              {err('comm')}
+            </section>
+          )}
+
+          {step === 7 && (
             <section>
               <h2 className="nf-h">{L.reviewT}</h2>
               <p className="nf-sub">{L.reviewSub}</p>
@@ -378,7 +410,7 @@ export default function NeedCarForm({ onClose }) {
             </section>
           )}
 
-          {step === 7 && (
+          {step === 8 && (
             <section className="nf-done">
               <FiCheckCircle />
               <h2 className="nf-h">{L.doneT}</h2>
@@ -393,18 +425,24 @@ export default function NeedCarForm({ onClose }) {
           {step >= 1 && step <= 5 && (
             <>
               <button type="button" className="nf-btn" onClick={back}>{L.back}</button>
-              <button type="button" className="nf-btn nf-btn-primary" onClick={step === 5 ? () => setStep(6) : next}>
-                {step === 1 ? L.cont : step === 5 ? L.review : L.next}
+              <button type="button" className="nf-btn nf-btn-primary" onClick={next}>
+                {step === 1 ? L.cont : L.next}
               </button>
             </>
           )}
           {step === 6 && (
             <>
+              <button type="button" className="nf-btn" onClick={back}>{L.back}</button>
+              <button type="button" className="nf-btn nf-btn-primary" onClick={next}>{L.review}</button>
+            </>
+          )}
+          {step === 7 && (
+            <>
               <button type="button" className="nf-btn" onClick={back} disabled={sending}>{L.back}</button>
               <button type="button" className="nf-btn nf-btn-primary" onClick={submit} disabled={sending}>{sending ? L.sending : L.submit}</button>
             </>
           )}
-          {step === 7 && <button type="button" className="nf-btn nf-btn-primary nf-full" onClick={onClose}>{L.doneBtn}</button>}
+          {step === 8 && <button type="button" className="nf-btn nf-btn-primary nf-full" onClick={onClose}>{L.doneBtn}</button>}
         </div>
       </div>
     </div>,

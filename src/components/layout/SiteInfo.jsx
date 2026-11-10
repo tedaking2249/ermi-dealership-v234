@@ -2,12 +2,33 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   IoCallOutline, IoMailOutline, IoLocationOutline, IoTimeOutline, IoChatbubbleEllipsesOutline,
+  IoGlobeOutline,
 } from 'react-icons/io5';
+import {
+  FaFacebookF, FaInstagram, FaTiktok, FaTelegramPlane,
+  FaWhatsapp, FaYoutube, FaTwitter, FaLinkedinIn, FaPhoneAlt,
+} from 'react-icons/fa';
 import { useAuth } from '../../context/AuthContext';
 import { useChat } from '../../context/ChatContext';
 import { useLanguage } from '../../context/LanguageContext';
 import { siteInfo } from '../../data/siteInfo';
 import './SiteInfo.css';
+
+const SOCIAL_ICONS = {
+  facebook: FaFacebookF,
+  instagram: FaInstagram,
+  tiktok: FaTiktok,
+  telegram: FaTelegramPlane,
+  whatsapp: FaWhatsapp,
+  youtube: FaYoutube,
+  twitter: FaTwitter,
+  x: FaTwitter,
+  linkedin: FaLinkedinIn,
+  call: FaPhoneAlt,
+};
+
+const getSocialIcon = (label) =>
+  SOCIAL_ICONS[label.toLowerCase().replace(/[^a-z]/g, '')] || IoGlobeOutline;
 
 function SiteInfo() {
   const { user } = useAuth();
@@ -93,10 +114,23 @@ function SiteInfo() {
           </ul>
 
           {socialLinks.length > 0 && (
-            <div className="site-info-social">
-              {socialLinks.map(([label, url]) => (
-                <a key={label} href={url} target="_blank" rel="noreferrer">{label}</a>
-              ))}
+            <div className="site-info-social-icons">
+              {socialLinks.map(([label, url]) => {
+                const Icon = getSocialIcon(label);
+                return (
+                  <a
+                    key={label}
+                    href={url}
+                    {...(url.startsWith('tel:') ? {} : { target: '_blank', rel: 'noreferrer' })}
+                    className={`site-info-social-btn site-info-social-btn--${label.toLowerCase().replace(/[^a-z]/g, '')}`}
+                    aria-label={label}
+                    title={label}
+                  >
+                    <Icon />
+                    <span>{label}</span>
+                  </a>
+                );
+              })}
             </div>
           )}
 

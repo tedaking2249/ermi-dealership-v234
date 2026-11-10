@@ -1,5 +1,6 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useListings } from '../../context/ListingContext';
+import api from '../../services/api';
 import './SellerSubmissions.css';
 
 function SellerSubmissions() {
@@ -11,6 +12,14 @@ function SellerSubmissions() {
   const [rejectError, setRejectError] = useState('');
 
   const active = listings.find((l) => l.id === activeId);
+
+  // opening a submission marks it as seen, so the navbar counter goes down
+  useEffect(() => {
+    if (!activeId) return;
+    api.patch('/listings/' + activeId + '/seen')
+      .then(() => window.dispatchEvent(new Event('ermi:submissions-changed')))
+      .catch(() => {});
+  }, [activeId]);
 
   const handleApprove = async (listing) => {
     if (busy) return;

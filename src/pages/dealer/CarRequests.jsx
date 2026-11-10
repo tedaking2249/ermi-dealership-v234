@@ -81,6 +81,7 @@ export default function CarRequests() {
                     <tr><td colSpan={7} style={{ ...cell, background: 'rgba(128,128,128,.08)' }}>
                       <div>Pay: {r.payment} · Transmission: {r.transmission || '—'} · Fuel: {r.fuel || '—'} · Body: {r.body || '—'}</div>
                       <div>Matters: {(r.priorities || []).join(', ') || '—'}</div>
+                      <div>Commission: {r.commissionType === 'PERCENT' ? '2% of car price' : r.commissionAmount ? `${Number(r.commissionAmount).toLocaleString()} ETB` : '-'}</div>
                       <div>Broker experience: {r.brokerExperience || '—'} {r.brokerFeedback ? `· "${r.brokerFeedback}"` : ''}</div>
                       <div>Heard via: {r.source || '—'} · Language: {r.lang}</div>
                       <div>Wants improved: {(r.improvements || []).join(', ') || '—'}</div>

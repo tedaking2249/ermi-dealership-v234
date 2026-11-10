@@ -19,6 +19,21 @@ function AdminNavbar() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [activeItem, setActiveItem] = useState(null);
   const [newNeeds, setNewNeeds] = useState(0);
+  const [unseenSubs, setUnseenSubs] = useState(0);
+
+  // submissions an admin has not opened yet (refreshes every 30s and when one is opened)
+  useEffect(() => {
+    if (!user) return undefined;
+    let alive = true;
+    const load = () =>
+      api.get('/listings/unseen-count')
+        .then((r) => { if (alive) setUnseenSubs(Number(r.data.count) || 0); })
+        .catch(() => {});
+    load();
+    const id = setInterval(load, 30000);
+    window.addEventListener('ermi:submissions-changed', load);
+    return () => { alive = false; clearInterval(id); window.removeEventListener('ermi:submissions-changed', load); };
+  }, [user]);
 
   // count of car requests still marked NEW (refreshes every minute and when the list changes)
   useEffect(() => {
@@ -65,7 +80,12 @@ function AdminNavbar() {
 
         <nav className={`admin-navbar-links ${menuOpen ? 'open' : ''}`}>
           <Link to="/dealer/dashboard" onClick={() => { setActive('dashboard'); closeMenu(); }} className={activeItem === 'dashboard' ? 'active' : ''}>Dashboard</Link>
-          <Link to="/dealer/submissions" onClick={() => { setActive('submissions'); closeMenu(); }} className={activeItem === 'submissions' ? 'active' : ''}>Submissions</Link>
+          <Link to="/dealer/submissions" onClick={() => { setActive('submissions'); closeMenu(); }} className={activeItem === 'submissions' ? 'active' : ''}>
+            Submissions
+            {unseenSubs > 0 && (
+              <span style={{ marginInlineStart: 6, background: '#ef4444', color: '#fff', borderRadius: 99, fontSize: 11, fontWeight: 700, padding: '1px 7px' }}>{unseenSubs}</span>
+            )}
+          </Link>
           <Link to="/dealer/requests" onClick={() => { setActive('requests'); closeMenu(); }} className={activeItem === 'requests' ? 'active' : ''}>Requests</Link>
           <Link to="/dealer/car-requests" onClick={() => { setActive('car-requests'); closeMenu(); }} className={activeItem === 'car-requests' ? 'active' : ''}>
             Car requests
