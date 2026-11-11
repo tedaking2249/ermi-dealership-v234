@@ -58,6 +58,7 @@ const toAppListing = (l) => {
     batteryCondition: d.batteryCondition || '',
     vin: d.vin || '',
     heardFrom: d.heardFrom || '',
+    engine: d.engine,
     exchangeAvailable: !!d.exchangeAvailable,
     exchangeCar: d.exchangeCar || '',
     commissionType: d.commissionType || '',

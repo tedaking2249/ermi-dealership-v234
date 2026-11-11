@@ -1,6 +1,8 @@
 export const translations = {
   en: {
-    'nav.more': 'More',
+    'sell.engine': 'Engine',
+    'sell.enginePlaceholder': 'e.g. 2.0L 4-cylinder petrol',
+    'details.engine': 'Engine',    'nav.more': 'More',
     'nav.customerRequests': 'Customer Requests',
     'sell.heardFrom': 'How did you hear about us?',
     'sell.heardOther': 'Please tell us where',
@@ -201,7 +203,9 @@ export const translations = {
   },
 
   am: {
-    'nav.more': 'ተጨማሪ',
+    'sell.engine': '\u121e\u1270\u122d',
+    'sell.enginePlaceholder': '\u1208\u121d\u1233\u120c 2.0L 4 \u1232\u120a\u1295\u12f0\u122d',
+    'details.engine': '\u121e\u1270\u122d',    'nav.more': 'ተጨማሪ',
     'nav.customerRequests': 'የደንበኞች ጥያቄዎች',
     'sell.heardFrom': 'ስለ እኛ እንዴት ሰሙ?',
     'sell.heardOther': 'የት እንደሰሙ ይንገሩን',

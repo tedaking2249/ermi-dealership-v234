@@ -20,7 +20,7 @@ const emptyForm = {
   make: '', model: '', year: '', mileage: '', price: '',
   bodyType: '', transmission: '',
   vin: '',
-  exchangeAvailable: false, exchangeCar: '', otherIssue: '',
+  engine: '',  exchangeAvailable: false, exchangeCar: '', otherIssue: '',
   heardFrom: '', heardOther: '',
   hybridType: '', petrolRange: '', combinedRange: '',
   evRange: '', chargingInfo: '', batteryCondition: '',
@@ -390,6 +390,10 @@ function SellCar() {
                     <option value="">{t('sell.select')}</option>
                     {TRANSMISSIONS.map((value) => <option key={value} value={value}>{translateOption(value)}</option>)}
                   </select>
+                </label>
+                <label>
+                  {t('sell.engine')}
+                  <input name="engine" value={form.engine} onChange={handleChange} placeholder={t('sell.enginePlaceholder')} maxLength={60} autoComplete="off" />
                 </label>
                 <label>
                   <span>{t('sell.vin')} <span className="sell-optional">({t('sell.optional')})</span></span>

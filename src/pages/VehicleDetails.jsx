@@ -204,6 +204,12 @@ function VehicleDetails() {
               <span className="spec-label">Transmission</span>
               <span className="spec-value">{vehicle.transmission}</span>
             </div>
+            {vehicle.engine && (
+              <div className="spec-item">
+                <span className="spec-label">{t('details.engine')}</span>
+                <span className="spec-value">{vehicle.engine}</span>
+              </div>
+            )}
             <div className="spec-item">
               <span className="spec-label">Year</span>
               <span className="spec-value">{vehicle.year}</span>
@@ -262,6 +268,7 @@ function VehicleDetails() {
               ['Fuel Type', vehicle.fuelType],
               ['Body Type', vehicle.bodyType],
               ['Transmission', vehicle.transmission],
+              ...(vehicle.engine ? [['Engine', vehicle.engine]] : []),
               ['Color', vehicle.color],
               [t('details.vin'), vehicle.vin],
               [t('details.exchange'), vehicle.exchangeAvailable ? (vehicle.exchangeCar ? `${t('details.exchangeYes')}: ${vehicle.exchangeCar}` : t('details.exchangeYes')) : ''],

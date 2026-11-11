@@ -114,6 +114,10 @@ function VehicleForm({ initialData, onSubmit, onCancel }) {
           <input type="number" name="mileage" value={form.mileage} onChange={handleChange} required />
         </label>
         <label>
+          Engine
+          <input name="engine" value={form.engine || ''} onChange={handleChange} placeholder="e.g. 2.0L 4-cylinder petrol" maxLength={60} />
+        </label>
+        <label>
           Fuel Type
           <select name="fuelType" value={form.fuelType} onChange={handleChange}>
             <option value="EV">EV</option>
