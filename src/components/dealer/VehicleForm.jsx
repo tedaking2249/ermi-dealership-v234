@@ -17,14 +17,17 @@ const normalizeFuelType = (value) => {
 
 const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
 const MAX_PHOTO_BYTES = 5 * 1024 * 1024;
+const MAX_PHOTOS = 10;
 
 function VehicleForm({ initialData, onSubmit, onCancel }) {
   const [form, setForm] = useState(() => {
     const base = initialData || emptyForm;
     return { ...base, fuelType: normalizeFuelType(base.fuelType) };
   });
-  const [photo, setPhoto] = useState(null);
-  const [preview, setPreview] = useState(initialData?.image || '');
+  const [items, setItems] = useState(() => {
+    const urls = (initialData?.photos && initialData.photos.length ? initialData.photos : [initialData?.image]).filter(Boolean);
+    return urls.map((u, i) => ({ key: `u${i}`, url: u, preview: u }));
+  });
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState('');
 
@@ -34,53 +37,65 @@ function VehicleForm({ initialData, onSubmit, onCancel }) {
   };
 
   const handlePhotoChange = (e) => {
-    const file = e.target.files?.[0];
+    const files = Array.from(e.target.files || []);
     e.target.value = '';
-    if (!file) return;
-    if (!ALLOWED_TYPES.includes(file.type)) {
-      setError(`"${file.name}" is not supported. Please use JPG, PNG or WebP.`);
-      return;
+    if (files.length === 0) return;
+    const room = MAX_PHOTOS - items.length;
+    const next = [];
+    let msg = '';
+    for (const file of files) {
+      if (next.length >= room) { msg = `You can add up to ${MAX_PHOTOS} photos.`; break; }
+      if (!ALLOWED_TYPES.includes(file.type)) { msg = `"${file.name}" is not supported. Please use JPG, PNG or WebP.`; continue; }
+      if (file.size > MAX_PHOTO_BYTES) { msg = `"${file.name}" is larger than 5 MB. Please choose a smaller photo.`; continue; }
+      next.push({ key: `f${Date.now()}-${next.length}-${file.name}`, file, preview: URL.createObjectURL(file) });
     }
-    if (file.size > MAX_PHOTO_BYTES) {
-      setError(`"${file.name}" is larger than 5 MB. Please choose a smaller photo.`);
-      return;
-    }
-    setError('');
-    setPhoto(file);
-    const reader = new FileReader();
-    reader.onload = () => setPreview(reader.result);
-    reader.readAsDataURL(file);
+    setError(msg);
+    if (next.length) setItems((prev) => [...prev, ...next]);
   };
 
-  const removePhoto = () => {
-    setPhoto(null);
-    setPreview(form.image || '');
-  };
+  const removePhoto = (i) => setItems((prev) => {
+    const it = prev[i];
+    if (it && it.file) URL.revokeObjectURL(it.preview);
+    return prev.filter((_, idx) => idx !== i);
+  });
+
+  const makeMain = (i) => setItems((prev) => {
+    const copy = [...prev];
+    const [it] = copy.splice(i, 1);
+    return [it, ...copy];
+  });
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (uploading) return;
     setError('');
 
-    let imageUrl = form.image;
-    if (photo) {
-      setUploading(true);
-      try {
-        const formData = new FormData();
-        formData.append('images', photo, photo.name);
-        const { data: uploaded } = await api.post('/uploads/images', formData, { timeout: 120000 });
-        imageUrl = uploaded?.images?.[0]?.url || imageUrl;
-      } catch (err) {
-        setError(err?.response?.data?.message || err.message || 'Could not upload the photo.');
-        setUploading(false);
-        return;
+    const finalPhotos = [];
+    if (items.some((it) => it.file)) setUploading(true);
+    try {
+      for (const it of items) {
+        if (it.file) {
+          const formData = new FormData();
+          formData.append('images', it.file, it.file.name);
+          const { data: uploaded } = await api.post('/uploads/images', formData, { timeout: 120000 });
+          const url = uploaded?.images?.[0]?.url;
+          if (!url) throw new Error('A photo could not be uploaded.');
+          finalPhotos.push(url);
+        } else {
+          finalPhotos.push(it.url);
+        }
       }
+    } catch (err) {
+      setError(err?.response?.data?.message || err.message || 'Could not upload the photos.');
       setUploading(false);
+      return;
     }
+    setUploading(false);
 
     onSubmit({
       ...form,
-      image: imageUrl,
+      image: finalPhotos[0] || '',
+      photos: finalPhotos,
       year: Number(form.year),
       price: Number(form.price),
       mileage: Number(form.mileage),
@@ -167,16 +182,27 @@ function VehicleForm({ initialData, onSubmit, onCancel }) {
               placeholder="e.g. Toyota Vitz 2012" required />
           </label>
         )}
-        <label className="vehicle-form-full">
-          Photo
-          <input type="file" accept="image/jpeg,image/png,image/webp" onChange={handlePhotoChange} />
-          {preview && (
-            <div className="vehicle-form-photo-preview">
-              <img src={preview} alt="Vehicle" />
-              {photo && <button type="button" onClick={removePhoto}>Remove</button>}
-            </div>
-          )}
-        </label>
+        <div className="vehicle-form-full vf-photos">
+          <span className="vf-photos-title">Photos ({items.length}/{MAX_PHOTOS})</span>
+          <div className="vf-photo-grid">
+            {items.map((it, i) => (
+              <div className={`vf-photo${i === 0 ? ' main' : ''}`} key={it.key}>
+                <img src={it.preview} alt={`Photo ${i + 1}`} />
+                {i === 0 && <span className="vf-photo-badge">Main</span>}
+                <button type="button" className="vf-photo-x" onClick={() => removePhoto(i)} aria-label="Remove photo">&times;</button>
+                {i > 0 && <button type="button" className="vf-photo-main" onClick={() => makeMain(i)}>Make main</button>}
+              </div>
+            ))}
+            {items.length < MAX_PHOTOS && (
+              <label className="vf-photo-add">
+                <span>+</span>
+                <small>Add photos</small>
+                <input type="file" multiple accept="image/jpeg,image/png,image/webp" onChange={handlePhotoChange} hidden />
+              </label>
+            )}
+          </div>
+          <small>JPG, PNG or WebP, up to 5 MB each. The first photo is the main one.</small>
+        </div>
         <label className="vehicle-form-checkbox">
           <input type="checkbox" name="featured" checked={form.featured} onChange={handleChange} />
           Featured on homepage

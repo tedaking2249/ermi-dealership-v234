@@ -84,7 +84,9 @@ const buildUpdatePayload = (existing, updates) => {
   if (touchesSpecs) payload.specs = extractSpecs({ ...existing, ...updates });
 
   // Changing the main image replaces the first photo and keeps the others
-  if ('image' in updates && updates.image !== existing.image) {
+  if (Array.isArray(updates.photos)) {
+    payload.photos = unique(updates.photos.filter(isUrl));
+  } else if ('image' in updates && updates.image !== existing.image) {
     payload.photos = unique([updates.image, ...(existing.photos || []).slice(1)].filter(isUrl));
   }
 

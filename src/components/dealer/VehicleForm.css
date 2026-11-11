@@ -60,3 +60,18 @@
     grid-template-columns: 1fr;
   }
 }
+
+/* multi-photo picker */
+.vf-photos { display: flex; flex-direction: column; gap: 8px; }
+.vf-photos-title { font-weight: 600; }
+.vf-photo-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(96px, 1fr)); gap: 10px; }
+.vf-photo { position: relative; aspect-ratio: 1; border-radius: 10px; overflow: hidden; border: 2px solid var(--color-border, #e2e8f0); background: #f1f5f9; }
+.vf-photo.main { border-color: var(--color-primary, #2563eb); }
+.vf-photo img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.vf-photo-badge { position: absolute; left: 4px; top: 4px; background: var(--color-primary, #2563eb); color: #fff; font-size: 10px; font-weight: 700; padding: 2px 6px; border-radius: 99px; }
+.vf-photo-x { position: absolute; right: 4px; top: 4px; width: 22px; height: 22px; border-radius: 50%; border: 0; background: rgba(0,0,0,.65); color: #fff; font-size: 14px; line-height: 1; cursor: pointer; padding: 0; }
+.vf-photo-main { position: absolute; left: 4px; right: 4px; bottom: 4px; border: 0; border-radius: 6px; background: rgba(0,0,0,.65); color: #fff; font-size: 10px; padding: 3px 0; cursor: pointer; opacity: 0; transition: opacity .15s; }
+.vf-photo:hover .vf-photo-main, .vf-photo:focus-within .vf-photo-main { opacity: 1; }
+@media (hover: none) { .vf-photo-main { opacity: 1; } }
+.vf-photo-add { aspect-ratio: 1; border: 2px dashed var(--color-border, #cbd5e1); border-radius: 10px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; cursor: pointer; color: var(--color-primary, #2563eb); }
+.vf-photo-add span { font-size: 28px; line-height: 1; }
