@@ -146,13 +146,6 @@ function Login() {
           {submitting ? 'Please wait...' : isRegister ? 'Create account' : 'Sign In'}
         </button>
 
-        {import.meta.env.DEV && !isRegister && (
-          <div className="login-demo-hint">
-            <p><strong>Development accounts</strong></p>
-            <p>Customer: customer@ermi.com / Customer@123</p>
-            <p>Dealer Admin: admin@ermi.com / Admin@123</p>
-          </div>
-        )}
       </form>
     </div>
   );
