@@ -194,7 +194,7 @@ function VehicleDetails() {
           <div className="vehicle-details-specs">
             <div className="spec-item">
               <span className="spec-label">Mileage</span>
-              <span className="spec-value">{vehicle.mileage.toLocaleString()} mi</span>
+              <span className="spec-value">{Number(vehicle.mileage) > 0 ? `${Number(vehicle.mileage).toLocaleString()} km` : 'Not specified'}</span>
             </div>
             <div className="spec-item">
               <span className="spec-label">Fuel Type</span>
@@ -264,7 +264,7 @@ function VehicleDetails() {
               ['Make', vehicle.make],
               ['Model', vehicle.model],
               ['Year', vehicle.year],
-              ['Mileage', `${vehicle.mileage.toLocaleString()} mi`],
+              ['Mileage', (Number(vehicle.mileage) > 0 ? `${Number(vehicle.mileage).toLocaleString()} km` : 'Not specified')],
               ['Fuel Type', vehicle.fuelType],
               ['Body Type', vehicle.bodyType],
               ['Transmission', vehicle.transmission],

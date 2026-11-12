@@ -98,7 +98,7 @@ function VehicleForm({ initialData, onSubmit, onCancel }) {
       photos: finalPhotos,
       year: Number(form.year),
       price: Number(form.price),
-      mileage: Number(form.mileage),
+      mileage: Number(form.mileage) || 0,
       vin: (form.vin || '').trim(),
       exchangeAvailable: !!form.exchangeAvailable,
       exchangeCar: form.exchangeAvailable ? (form.exchangeCar || '').trim() : '',
@@ -125,8 +125,8 @@ function VehicleForm({ initialData, onSubmit, onCancel }) {
           <input type="number" name="price" value={form.price} onChange={handleChange} required />
         </label>
         <label>
-          Mileage
-          <input type="number" name="mileage" value={form.mileage} onChange={handleChange} required />
+          Mileage (km, optional)
+          <input type="number" name="mileage" value={form.mileage} onChange={handleChange} min="0" placeholder="e.g. 85000" />
         </label>
         <label>
           Engine

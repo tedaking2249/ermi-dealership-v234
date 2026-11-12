@@ -371,7 +371,7 @@ function SellCar() {
                 </label>
                 <label>
                   {t('sell.mileage')}
-                  <input type="number" name="mileage" value={form.mileage} onChange={handleChange} placeholder={t('sell.mileagePlaceholder')} required />
+                  <input type="number" name="mileage" value={form.mileage} onChange={handleChange} placeholder={t('sell.mileagePlaceholder')} min="0" />
                 </label>
                 <label>
                   {t('sell.price')}

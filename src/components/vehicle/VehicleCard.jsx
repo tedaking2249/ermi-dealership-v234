@@ -54,7 +54,7 @@ function VehicleCard({ vehicle }) {
         <h3>{vehicle.year} {vehicle.make} {vehicle.model}</h3>
         <p className="vehicle-card-price">ETB {vehicle.price.toLocaleString()}</p>
         <div className="vehicle-card-specs">
-          <span>{vehicle.mileage.toLocaleString()} mi</span>
+          <span>{vehicle.mileage.toLocaleString()} km</span>
           <span>&bull;</span>
           <span>{vehicle.fuelType}</span>
           <span>&bull;</span>

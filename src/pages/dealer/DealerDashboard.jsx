@@ -108,7 +108,7 @@ function DealerDashboard() {
                   <td>{vehicle.make} {vehicle.model}</td>
                   <td>{vehicle.year}</td>
                   <td>ETB {vehicle.price.toLocaleString()}</td>
-                  <td>{vehicle.mileage.toLocaleString()} mi</td>
+                  <td>{vehicle.mileage.toLocaleString()} km</td>
                   <td>{vehicle.featured ? 'Yes' : 'No'}</td>
                   <td className="dealer-table-actions">
                     {vehicle.status !== 'SOLD' && (
