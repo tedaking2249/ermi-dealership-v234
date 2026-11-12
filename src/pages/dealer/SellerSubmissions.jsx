@@ -109,7 +109,7 @@ function SellerSubmissions() {
               <div className="submission-fields">
                 <div><span>Type</span><strong>{active.vehicleType}</strong></div>
                 <div><span>Price</span><strong>{Number(active.price).toLocaleString()} ETB</strong></div>
-                <div><span>Mileage</span><strong>{Number(active.mileage).toLocaleString()} km</strong></div>
+                {Number(active.mileage) > 0 && <div><span>Mileage</span><strong>{Number(active.mileage).toLocaleString()} km</strong></div>}
                 <div><span>Body Type</span><strong>{active.bodyType}</strong></div>
                 <div><span>Transmission</span><strong>{active.transmission}</strong></div>
                 {active.hybridType && <div><span>Hybrid Type</span><strong>{active.hybridType}</strong></div>}
