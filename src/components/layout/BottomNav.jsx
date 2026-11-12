@@ -73,7 +73,10 @@ function BottomNav() {
         </NavLink>
 
         <button type="button" className="bottom-tab" onClick={() => setMoreOpen(true)} aria-haspopup="dialog">
-          <span className="bottom-icon"><IoGridOutline /></span>
+          <span className="bottom-icon">
+            <IoGridOutline />
+            {user && <span className="bottom-online" aria-hidden="true" />}
+          </span>
           {t('tab.more')}
         </button>
       </nav>
@@ -82,7 +85,12 @@ function BottomNav() {
         <div className="more-backdrop" onClick={() => setMoreOpen(false)}>
           <div className="more-sheet" role="dialog" aria-label="More" onClick={(e) => e.stopPropagation()}>
             <div className="more-header">
+              <div className="more-who">
               <strong>{user ? user.name : t('more.welcome')}</strong>
+              {user && (
+                <small className="more-signed"><i /> {lang === 'am' ? '\u1308\u1265\u1270\u12cb\u120d' : 'Signed in'}</small>
+              )}
+            </div>
               <button type="button" onClick={() => setMoreOpen(false)} aria-label="Close">
                 <IoCloseOutline />
               </button>

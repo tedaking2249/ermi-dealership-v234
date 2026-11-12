@@ -7,6 +7,7 @@ import { useListings } from '../../context/ListingContext';
 import { useChat } from '../../context/ChatContext';
 import logo from '../../assets/logo.png';
 import api from '../../services/api';
+import WelcomeToast from '../common/WelcomeToast';
 import './AdminNavbar.css';
 
 function AdminNavbar() {
@@ -64,6 +65,7 @@ function AdminNavbar() {
 
   return (
     <header className="admin-navbar">
+      <WelcomeToast />
       <div className="admin-navbar-container">
         <Link to="/dealer/dashboard" className="admin-navbar-logo" onClick={closeMenu}>
           <img src={logo} alt="" className="admin-navbar-logo-img" />

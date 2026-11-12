@@ -50,6 +50,10 @@ function Login() {
     setSubmitting(false);
 
     if (result.success) {
+      try {
+        sessionStorage.setItem('ermi_welcome', JSON.stringify({ name: result.user.name, mode: isRegister ? 'register' : 'login', at: Date.now() }));
+      } catch { /* ignore */ }
+      window.dispatchEvent(new Event('ermi:welcome'));
       navigate(result.user.role === 'admin' ? '/dealer/dashboard' : '/');
     } else {
       setError(result.error);

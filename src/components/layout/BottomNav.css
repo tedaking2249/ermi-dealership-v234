@@ -187,3 +187,8 @@
     display: none;
   }
 }
+/* signed-in markers on phones */
+.bottom-online { position: absolute; top: 2px; right: 10px; width: 11px; height: 11px; border-radius: 50%; background: #22c55e; border: 2px solid var(--white, #fff); }
+.more-who { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.more-signed { display: inline-flex; align-items: center; gap: 6px; color: #16a34a; font-size: 0.78rem; font-weight: 700; }
+.more-signed i { width: 8px; height: 8px; border-radius: 50%; background: #22c55e; display: inline-block; }

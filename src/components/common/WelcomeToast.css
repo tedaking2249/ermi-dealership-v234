@@ -1,0 +1,25 @@
+.welcome-toast {
+  position: fixed;
+  top: 74px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 400;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  max-width: calc(100vw - 32px);
+  padding: 12px 18px;
+  border-radius: 14px;
+  background: #16a34a;
+  color: #fff;
+  box-shadow: 0 10px 30px rgba(15, 42, 92, 0.28);
+  cursor: pointer;
+  animation: welcome-in 0.35s ease-out;
+}
+.welcome-toast svg { font-size: 2rem; flex-shrink: 0; }
+.welcome-toast strong { display: block; font-size: 1rem; line-height: 1.25; }
+.welcome-toast span { display: block; font-size: 0.85rem; opacity: 0.95; }
+@keyframes welcome-in {
+  from { transform: translate(-50%, -16px); opacity: 0; }
+  to { transform: translate(-50%, 0); opacity: 1; }
+}

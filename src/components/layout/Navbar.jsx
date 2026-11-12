@@ -9,6 +9,7 @@ import { useChat } from '../../context/ChatContext';
 import { useFavorites } from '../../context/FavoritesContext';
 import { useLanguage } from '../../context/LanguageContext';
 import logo from '../../assets/logo.png';
+import WelcomeToast from '../common/WelcomeToast';
 import './Navbar.css';
 
 const navClass = ({ isActive }) => `site-nav-link ${isActive ? 'active' : ''}`;
@@ -62,6 +63,7 @@ function Navbar() {
 
   return (
     <header className="site-header">
+      <WelcomeToast />
       <div className="site-header-inner">
         <Link to="/" className="site-logo" aria-label="Ermi Dealership home">
           <img src={logo} alt="" className="site-logo-img" />
