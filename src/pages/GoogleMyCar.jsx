@@ -52,15 +52,6 @@ function GoogleMyCar() {
             )}
           </div>
         </form>
-
-        <div className="gmc-warning">
-          <IoInformationCircleOutline />
-          <p>
-            Cars imported from Japan often have only a short chassis number such as NZE141-1234567.
-            That number does not contain the year. For those cars, ask for the export certificate or
-            ask the maker's dealer to check it.
-          </p>
-        </div>
       </section>
 
       <section className="gmc-section" aria-labelledby="gmc-sites-title">
