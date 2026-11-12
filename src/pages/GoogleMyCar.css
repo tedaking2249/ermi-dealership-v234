@@ -401,3 +401,7 @@
 .gmc-site-btn { margin-top: auto; display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 44px; padding: 10px 16px; border-radius: 12px; background: #2563eb; color: #ffffff; font-weight: 700; font-size: 14px; text-decoration: none; }
 .gmc-site-btn:hover { background: #1d4ed8; }
 .gmc-site-btn:focus-visible { outline: 3px solid rgba(37, 99, 235, 0.35); outline-offset: 2px; }
+
+/* clear button inside the VIN box */
+.gmc-clear { position: absolute; right: 8px; top: 50%; transform: translateY(-50%); display: grid; place-items: center; width: 30px; height: 30px; border: 0; background: none; color: var(--color-text-light); font-size: 1.3rem; cursor: pointer; border-radius: 50%; }
+.gmc-clear:hover { color: var(--color-text); }
