@@ -405,3 +405,7 @@
 /* clear button inside the VIN box */
 .gmc-clear { position: absolute; right: 8px; top: 50%; transform: translateY(-50%); display: grid; place-items: center; width: 30px; height: 30px; border: 0; background: none; color: var(--color-text-light); font-size: 1.3rem; cursor: pointer; border-radius: 50%; }
 .gmc-clear:hover { color: var(--color-text); }
+
+/* gmc-warning-black: readable, bold black warning text */
+.gmc-warning, .gmc-warning p, .gmc-warning svg { color: #000 !important; }
+.gmc-warning p { font-weight: 700; }
