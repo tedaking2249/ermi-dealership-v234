@@ -16,6 +16,7 @@ export default function CompareBar() {
   const [ask, setAsk] = useState(false);
   const prevLen = useRef(ids.length);
   const lastN = useRef(ids.length);
+  console.log('[compare] bar loaded, picked:', ids.length);
 
   // second trigger: listens to the compare event directly
   useEffect(() => {
