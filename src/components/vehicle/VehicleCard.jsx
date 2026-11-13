@@ -1,5 +1,6 @@
 import { Link, useNavigate } from 'react-router-dom';
-import CompareToggle from '../../features/compare/CompareToggle'; // compare-featureimport { FaHeart, FaRegHeart } from 'react-icons/fa';
+import CompareToggle from '../../features/compare/CompareToggle'; // compare-feature
+import { FaHeart, FaRegHeart } from 'react-icons/fa';
 import { useAuth } from '../../context/AuthContext';
 import { useFavorites } from '../../context/FavoritesContext';
 import { useLanguage } from '../../context/LanguageContext';
@@ -31,6 +32,7 @@ function VehicleCard({ vehicle }) {
   return (
     <Link to={`/inventory/${vehicle.id}`} className="vehicle-card" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>
       <div className="vehicle-card-image">
+        <CompareToggle vehicle={vehicle} />{/* compare-feature */}
         {vehicle.image ? (
           <img src={vehicle.image} alt={`${vehicle.make} ${vehicle.model}`} />
         ) : (

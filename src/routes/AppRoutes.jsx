@@ -143,6 +143,7 @@ function AppRoutes() {
         }
       />
       <Route path="/customer-requests" element={<CustomerRequests />} />
+      <Route path="/compare" element={<Compare />} />{/* compare-feature */}
       <Route path="*" element={<NotFound />} />
     </Routes>
   );
