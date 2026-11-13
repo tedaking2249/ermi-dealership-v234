@@ -29,7 +29,8 @@ export default function CompareBar() {
       lastN.current = n;
     }, 60);
     window.addEventListener('ermi:compare', onChange);
-    return () => window.removeEventListener('ermi:compare', onChange);
+    const poll = setInterval(onChange, 300);
+    return () => { window.removeEventListener('ermi:compare', onChange); clearInterval(poll); };
   }, []);
 
   // the prompt appears when a car is added and two or more are picked
