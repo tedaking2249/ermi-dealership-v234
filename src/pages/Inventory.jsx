@@ -6,7 +6,6 @@ import { useLanguage } from '../context/LanguageContext';
 import VehicleGrid from '../components/vehicle/VehicleGrid';
 import SearchBar from '../components/common/SearchBar';
 import FilterPanel from '../components/vehicle/FilterPanel';
-import CompareBar from '../features/compare/CompareBar'; // compare-feature
 import NeedCarPrompt, { NeedCarInline, NeedCarLink } from '../components/need/NeedCarPrompt';
 import searchVehicles from '../utils/searchVehicles';
 import filterVehicles from '../utils/filterVehicles';
@@ -139,7 +138,6 @@ function Inventory() {
           {results.length === 0 && <NeedCarInline variant="empty" />}
         </div>
       </div>
-    <CompareBar />{/* compare-feature */}
     </div>
   );
 }

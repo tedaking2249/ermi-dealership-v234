@@ -10,6 +10,7 @@ import { useFavorites } from '../../context/FavoritesContext';
 import { useLanguage } from '../../context/LanguageContext';
 import logo from '../../assets/logo.png';
 import WelcomeToast from '../common/WelcomeToast';
+import CompareBar from '../../features/compare/CompareBar'; // compare-feature
 import './Navbar.css';
 
 const navClass = ({ isActive }) => `site-nav-link ${isActive ? 'active' : ''}`;
@@ -64,6 +65,7 @@ function Navbar() {
   return (
     <header className="site-header">
       <WelcomeToast />
+      <CompareBar />{/* compare-feature */}
       <div className="site-header-inner">
         <Link to="/" className="site-logo" aria-label="Ermi Dealership home">
           <img src={logo} alt="" className="site-logo-img" />

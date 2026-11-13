@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { createPortal } from 'react-dom';
 import { useVehicles } from '../../context/VehicleContext';
 import { useLanguage } from '../../context/LanguageContext';
 import { useCompare } from './compareStore';
@@ -11,6 +12,7 @@ export default function CompareBar() {
   const { vehicles } = useVehicles();
   const { lang } = useLanguage();
   const navigate = useNavigate();
+  const { pathname } = useLocation();
   const L = TEXT[lang === 'am' ? 'am' : 'en'];
   const [note, setNote] = useState(false);
   const [ask, setAsk] = useState(false);
@@ -55,7 +57,7 @@ export default function CompareBar() {
     return () => { window.removeEventListener('ermi:compare-full', onFull); clearTimeout(timer); };
   }, []);
 
-  if (ids.length === 0) return null;
+  if (ids.length === 0 || pathname.startsWith('/compare')) return null;
   const picked = ids.map((id) => vehicles.find((v) => String(v.id) === id)).filter(Boolean);
 
   const chip = (v, removable) => (
@@ -66,7 +68,7 @@ export default function CompareBar() {
     </div>
   );
 
-  return (
+  return createPortal(
     <>
       {ask && (
         <div className="cmp-ask-backdrop" onClick={() => setAsk(false)}>
@@ -98,6 +100,7 @@ export default function CompareBar() {
           </button>
         </div>
       </div>
-    </>
+    </>,
+    document.body
   );
 }
