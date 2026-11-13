@@ -31,3 +31,21 @@ export const TEXT = {
     loading: '...',
   },
 };
+const extra = {
+  en: {
+    askTitle: 'Compare these cars?',
+    askSub: 'Open the side-by-side comparison now?',
+    now: 'Compare now',
+    later: 'Keep browsing',
+    close: 'Close',
+  },
+  am: {
+    askTitle: '\u12a5\u1290\u12da\u1205\u1295 \u1218\u12aa\u1296\u127d \u121b\u12c8\u12f3\u12f0\u122d \u12ed\u1348\u120d\u130b\u1209?',
+    askSub: '\u130e\u1295 \u1208\u130e\u1295 \u121b\u12c8\u12f3\u12f0\u122a\u12eb\u12cd\u1295 \u12a0\u1201\u1295 \u1218\u12ad\u1348\u1275 \u12ed\u1348\u120d\u130b\u1209?',
+    now: '\u12a0\u1201\u1295 \u12a0\u12c8\u12f3\u12f5\u122d',
+    later: '\u121b\u1230\u1235 \u120d\u1240\u1325\u120d',
+    close: '\u12dd\u130b',
+  },
+};
+Object.assign(TEXT.en, extra.en);
+Object.assign(TEXT.am, extra.am);

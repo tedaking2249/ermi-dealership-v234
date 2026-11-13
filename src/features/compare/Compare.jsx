@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { Link, useSearchParams } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { useVehicles } from '../../context/VehicleContext';
 import { useLanguage } from '../../context/LanguageContext';
 import { useCompare, MAX_COMPARE } from './compareStore';
@@ -15,6 +15,13 @@ export default function Compare() {
   const store = useCompare();
   const [params, setParams] = useSearchParams();
   const [copied, setCopied] = useState(false);
+  const navigate = useNavigate();
+  const close = () => navigate('/inventory');
+  useEffect(() => {
+    const onKey = (e) => { if (e.key === 'Escape') navigate('/inventory'); };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [navigate]);
 
   const urlIds = (params.get('ids') || '').split(',').map((s) => s.trim()).filter(Boolean).slice(0, MAX_COMPARE);
   const fromUrl = urlIds.length > 0;
@@ -66,6 +73,7 @@ export default function Compare() {
 
   return (
     <div className="cmp-page">
+      <button type="button" className="cmp-close" onClick={close} aria-label={L.close} title={L.close}>&times;</button>
       <div className="cmp-head">
         <h1>{L.title}</h1>
         {cars.length > 0 && (
