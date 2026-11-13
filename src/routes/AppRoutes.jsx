@@ -20,8 +20,8 @@ import AdminUsers from '../pages/dealer/AdminUsers';
 import Analytics from '../pages/dealer/Analytics';
 import CarRequests from '../pages/dealer/CarRequests';
 import CustomerRequests from '../pages/CustomerRequests';
-import ProtectedRoute from '../components/auth/ProtectedRoute';
-import NotFound from '../pages/NotFound';
+import Compare from '../features/compare/Compare'; // compare-feature
+import ProtectedRoute from '../components/auth/ProtectedRoute';import NotFound from '../pages/NotFound';
 function AppRoutes() {
   return (
     <Routes>
