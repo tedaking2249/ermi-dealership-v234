@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { FiArrowLeft, FiMoreVertical, FiPaperclip, FiSend } from 'react-icons/fi';
+import { FiArrowLeft, FiMoreVertical, FiPaperclip, FiSend, FiTrash2, FiSlash } from 'react-icons/fi';
 import { useAuth } from '../../context/AuthContext';
 import { useChat } from '../../context/ChatContext';
 import { useVehicles } from '../../context/VehicleContext';
@@ -43,13 +43,16 @@ function sameDay(a, b) {
 
 function ChatWindow({ conversationId, conversationLabel, onBack, quickReplies = QUICK_REPLIES }) {
   const { user } = useAuth();
-  const { conversations, sendMessage, sendVoiceMessage, markRead, unreadOf } = useChat();
+  const { conversations, sendMessage, sendVoiceMessage, markRead, unreadOf, deleteMessage } = useChat();
   const { vehicles } = useVehicles();
   const messages = useMessages(conversationId);
   const navigate = useNavigate();
   const [text, setText] = useState('');
   const [voiceBusy, setVoiceBusy] = useState(false);
   const [voiceError, setVoiceError] = useState('');
+  const [confirmMsg, setConfirmMsg] = useState(null);
+  const [deleting, setDeleting] = useState(false);
+  const isStaff = user?.role === 'admin';
   const bottomRef = useRef(null);
   const inputRef = useRef(null);
 
@@ -104,6 +107,15 @@ function ChatWindow({ conversationId, conversationLabel, onBack, quickReplies = 
     }
   };
 
+  const confirmDelete = async () => {
+    if (!confirmMsg || deleting) return;
+    setDeleting(true);
+    const idx = messages.findIndex((m) => m.id === confirmMsg.id);
+    const ok = await deleteMessage(conversationId, confirmMsg, idx === messages.length - 1);
+    setDeleting(false);
+    setConfirmMsg(null);
+    if (!ok) setVoiceError('Could not delete the message. Please try again.');
+  };
   const handleQuickReply = (reply) => {
     setText(reply);
   };
@@ -155,6 +167,7 @@ function ChatWindow({ conversationId, conversationLabel, onBack, quickReplies = 
         )}
         {messages.map((msg, index) => {
           const own = msg.senderId === String(user.id);
+          const canDelete = !msg.deleted && (own || isStaff);
           const prev = index > 0 ? messages[index - 1] : null;
           const showDivider = !prev || !sameDay(prev.createdAt, msg.createdAt);
           return (
@@ -165,9 +178,19 @@ function ChatWindow({ conversationId, conversationLabel, onBack, quickReplies = 
                 </div>
               )}
               <div className={`tg-bubble-row ${own ? 'own' : 'other'}`}>
-                <div className={`tg-bubble ${own ? 'own' : 'other'}`}>
+                <div
+                  className={`tg-bubble ${own ? 'own' : 'other'}${msg.deleted ? ' deleted' : ''}`}
+                  onContextMenu={canDelete ? (e) => { e.preventDefault(); setConfirmMsg(msg); } : undefined}
+                >
+                  {canDelete && (
+                    <button type="button" className="tg-bubble-del" onClick={() => setConfirmMsg(msg)} aria-label="Delete message" title="Delete">
+                      <FiTrash2 />
+                    </button>
+                  )}
                   {!own && <span className="tg-bubble-sender">{msg.senderName}</span>}
-                  {msg.type === 'voice' ? (
+                  {msg.deleted ? (
+                    <p className="tg-bubble-deleted"><FiSlash /> {own ? 'You deleted this message' : 'This message was deleted'}</p>
+                  ) : msg.type === 'voice' ? (
                     <VoiceMessage url={msg.audioUrl} duration={msg.duration} />
                   ) : (
                     <p className="tg-bubble-text">{msg.text}</p>
@@ -222,6 +245,20 @@ function ChatWindow({ conversationId, conversationLabel, onBack, quickReplies = 
           <FiSend />
         </button>
       </form>
+    {confirmMsg && (
+        <div className="tg-confirm-backdrop" onClick={() => !deleting && setConfirmMsg(null)}>
+          <div className="tg-confirm" role="dialog" aria-modal="true" onClick={(e) => e.stopPropagation()}>
+            <h4>{confirmMsg.type === 'voice' ? 'Delete this voice message?' : 'Delete this message?'}</h4>
+            <p>It will be removed for everyone in this conversation.</p>
+            <div className="tg-confirm-actions">
+              <button type="button" className="tg-confirm-cancel" onClick={() => setConfirmMsg(null)} disabled={deleting}>Cancel</button>
+              <button type="button" className="tg-confirm-delete" onClick={confirmDelete} disabled={deleting}>
+                {deleting ? 'Deleting...' : 'Delete'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

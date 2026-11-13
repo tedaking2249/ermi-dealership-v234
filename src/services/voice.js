@@ -12,3 +12,12 @@ export const uploadVoice = async (blob) => {
   const response = await api.post('/voice', form, { timeout: 60000 });
   return response.data.data;
 };
+// Best effort: ask the server to remove the audio file of a deleted voice message.
+// The message is already deleted in the chat even if this request fails.
+export const removeVoiceFile = async (url) => {
+  try {
+    await api.delete('/voice', { data: { url } });
+  } catch {
+    /* ignore */
+  }
+};

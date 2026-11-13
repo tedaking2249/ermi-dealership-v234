@@ -369,3 +369,42 @@
   letter-spacing: -2px;
 }
 
+
+/* ===== deleting messages ===== */
+.tg-bubble { position: relative; }
+.tg-bubble-del {
+  position: absolute;
+  top: -9px;
+  width: 26px;
+  height: 26px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--ln, #e2e8f0);
+  border-radius: 50%;
+  background: var(--white, #fff);
+  color: #dc2626;
+  font-size: 0.85rem;
+  box-shadow: 0 2px 8px rgba(15, 42, 92, 0.18);
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 0.15s ease;
+}
+.tg-bubble.own .tg-bubble-del { left: -10px; }
+.tg-bubble.other .tg-bubble-del { right: -10px; }
+.tg-bubble:hover .tg-bubble-del,
+.tg-bubble-del:focus-visible { opacity: 1; }
+@media (hover: none) { .tg-bubble-del { opacity: 0.9; } }
+
+.tg-bubble.deleted { background: var(--soft, #eef3fb); color: var(--sub, #5b6b87); border: 1px dashed var(--ln, #cbd5e1); }
+.tg-bubble-deleted { display: flex; align-items: center; gap: 6px; margin: 0; font-style: italic; font-size: 0.85rem; }
+
+.tg-confirm-backdrop { position: fixed; inset: 0; z-index: 300; display: flex; align-items: center; justify-content: center; padding: 16px; background: rgba(15, 42, 92, 0.5); }
+.tg-confirm { width: 100%; max-width: 340px; padding: 20px; border-radius: 16px; background: var(--white, #fff); color: var(--ink, #0f2a5c); box-shadow: 0 20px 50px rgba(15, 42, 92, 0.35); }
+.tg-confirm h4 { margin: 0 0 6px; font-size: 1.05rem; }
+.tg-confirm p { margin: 0 0 16px; color: var(--sub, #5b6b87); font-size: 0.88rem; }
+.tg-confirm-actions { display: flex; gap: 10px; }
+.tg-confirm-actions button { flex: 1; padding: 11px; border-radius: 10px; font: inherit; font-weight: 700; cursor: pointer; }
+.tg-confirm-cancel { border: 1px solid var(--ln, #cbd5e1); background: var(--white, #fff); color: var(--ink, #0f2a5c); }
+.tg-confirm-delete { border: none; background: #dc2626; color: #fff; }
+.tg-confirm-actions button:disabled { opacity: 0.6; cursor: default; }

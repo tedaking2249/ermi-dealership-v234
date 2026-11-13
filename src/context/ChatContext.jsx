@@ -5,6 +5,7 @@ import {
 } from 'firebase/firestore';
 import { db } from '../config/firebase';
 import { useAuth } from './AuthContext';
+import { removeVoiceFile } from '../services/voice';
 
 const ChatContext = createContext();
 
@@ -182,6 +183,36 @@ export function ChatProvider({ children }) {
     }
   };
 
+  // Deletes a message for everyone: the text / audio link is cleared and the bubble becomes
+  // "This message was deleted". isLast keeps the conversation preview in sync.
+  const deleteMessage = async (conversationId, message, isLast) => {
+    try {
+      await setDoc(
+        doc(db, 'conversations', conversationId, 'messages', message.id),
+        {
+          deleted: true,
+          deletedAt: serverTimestamp(),
+          deletedBy: String(userId),
+          text: '',
+          audioUrl: '',
+        },
+        { merge: true }
+      );
+      if (isLast) {
+        await setDoc(
+          doc(db, 'conversations', conversationId),
+          { lastMessage: 'This message was deleted' },
+          { merge: true }
+        );
+      }
+      if (message.type === 'voice' && message.audioUrl) removeVoiceFile(message.audioUrl);
+      return true;
+    } catch (err) {
+      console.error('Could not delete message:', err);
+      setChatError(describeError(err));
+      return false;
+    }
+  };
   // Called when I open a conversation: my unread counter goes back to zero
   const markRead = async (conversationId) => {
     try {
