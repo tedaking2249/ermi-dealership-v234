@@ -110,11 +110,22 @@ function ChatWindow({ conversationId, conversationLabel, onBack, quickReplies = 
   const confirmDelete = async () => {
     if (!confirmMsg || deleting) return;
     setDeleting(true);
-    const idx = messages.findIndex((m) => m.id === confirmMsg.id);
-    const ok = await deleteMessage(conversationId, confirmMsg, idx === messages.length - 1);
-    setDeleting(false);
-    setConfirmMsg(null);
-    if (!ok) setVoiceError('Could not delete the message. Please try again.');
+    try {
+      if (typeof deleteMessage !== 'function') throw new Error('deleteMessage is not available');
+      const idx = messages.findIndex((m) => m.id === confirmMsg.id);
+      // The chat already shows the change instantly; if the server is slow we stop waiting after 8 seconds
+      const ok = await Promise.race([
+        deleteMessage(conversationId, confirmMsg, idx === messages.length - 1),
+        new Promise((resolve) => setTimeout(() => resolve(true), 8000)),
+      ]);
+      if (!ok) setVoiceError('Could not delete the message. Please try again.');
+    } catch (err) {
+      console.error('Delete failed:', err);
+      setVoiceError('Could not delete the message. Please try again.');
+    } finally {
+      setDeleting(false);
+      setConfirmMsg(null);
+    }
   };
   const handleQuickReply = (reply) => {
     setText(reply);

@@ -249,6 +249,7 @@ export function ChatProvider({ children }) {
         sendVoiceMessage,
         sendMessage,
         markRead,
+        deleteMessage,
       }}
     >
       {children}
