@@ -71,7 +71,7 @@ export default function CompareAdvice() {
   const close = cars.length > 1 && scored[0].score - scored[1].score < 3;
 
   return (
-    <section className="cmp-advice">
+    <><section className="cmp-advice cmp-advice-price">
       <h3>{L.priceHead}</h3>
       <div className="cmp-prices">
         {info.map((c) => (
@@ -81,6 +81,8 @@ export default function CompareAdvice() {
           </div>
         ))}
       </div>
+    </section>
+    <section className="cmp-advice cmp-advice-sug">
 
       {cars.length > 1 && (
         <>
@@ -92,6 +94,6 @@ export default function CompareAdvice() {
       )}
 
       <button type="button" className="cmp-done" onClick={done}>{L.done}</button>
-    </section>
+    </section></>
   );
 }
