@@ -15,6 +15,22 @@ export default function CompareBar() {
   const [note, setNote] = useState(false);
   const [ask, setAsk] = useState(false);
   const prevLen = useRef(ids.length);
+  const lastN = useRef(ids.length);
+
+  // second trigger: listens to the compare event directly
+  useEffect(() => {
+    const readN = () => {
+      try { return JSON.parse(localStorage.getItem('ermi_compare') || '[]').length; } catch (e) { return 0; }
+    };
+    const onChange = () => setTimeout(() => {
+      const n = readN();
+      if (n >= 2 && n > lastN.current) setAsk(true);
+      if (n < 2) setAsk(false);
+      lastN.current = n;
+    }, 60);
+    window.addEventListener('ermi:compare', onChange);
+    return () => window.removeEventListener('ermi:compare', onChange);
+  }, []);
 
   // the prompt appears when a car is added and two or more are picked
   useEffect(() => {
