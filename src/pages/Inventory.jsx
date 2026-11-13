@@ -1,5 +1,6 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
+import { IoFilterOutline, IoCloseOutline } from 'react-icons/io5';
 import { useVehicles } from '../context/VehicleContext';
 import { useLanguage } from '../context/LanguageContext';
 import VehicleGrid from '../components/vehicle/VehicleGrid';
@@ -12,10 +13,11 @@ import './Inventory.css';
 
 function Inventory() {
   const { vehicles } = useVehicles();
-  const { t } = useLanguage();
+  const { t, lang } = useLanguage();
   const [searchParams, setSearchParams] = useSearchParams();
 
   const [searchTerm, setSearchTerm] = useState(searchParams.get('search') || '');
+  const [filtersOpen, setFiltersOpen] = useState(false);
   const [filters, setFilters] = useState({
     minPrice: searchParams.get('minPrice') || '',
     maxPrice: searchParams.get('maxPrice') || '',
@@ -61,6 +63,25 @@ function Inventory() {
     return filterVehicles(searched, filters);
   }, [vehicles, searchTerm, filters]);
 
+  const activeFilters = Object.values(filters).filter((v) => (Array.isArray(v) ? v.length > 0 : Boolean(v))).length;
+  const am = lang === 'am';
+  const txt = {
+    filters: am ? '\u121b\u1323\u122a\u12eb' : 'Filters',
+    clear: am ? '\u1201\u1209\u1295\u121d \u12a0\u133d\u12f3' : 'Clear all',
+    close: am ? '\u12dd\u130b' : 'Close',
+    show: (n) => (am ? `${n} \u1218\u12aa\u1296\u127d\u1295 \u12a0\u1233\u12ed` : `Show ${n} cars`),
+  };
+
+  // while the phone filter panel is open: lock page scroll, Esc closes it
+  useEffect(() => {
+    if (!filtersOpen) return undefined;
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    const onKey = (e) => { if (e.key === 'Escape') setFiltersOpen(false); };
+    window.addEventListener('keydown', onKey);
+    return () => { document.body.style.overflow = prev; window.removeEventListener('keydown', onKey); };
+  }, [filtersOpen]);
+
   return (
     <div className="inventory-page">
       <NeedCarPrompt />
@@ -80,12 +101,38 @@ function Inventory() {
 
       <div style={{ textAlign: 'center', margin: '0 0 14px' }}><NeedCarLink /></div>
 
+      <div className="inv-mobile-bar">
+        <button type="button" className="inv-filter-btn" onClick={() => setFiltersOpen(true)} aria-haspopup="dialog">
+          <IoFilterOutline /> {txt.filters}
+          {activeFilters > 0 && <span className="inv-filter-count">{activeFilters}</span>}
+        </button>
+        {activeFilters > 0 && (
+          <button type="button" className="inv-filter-clear" onClick={handleClearFilters}>{txt.clear}</button>
+        )}
+        <span className="inv-mobile-count">{results.length} / {vehicles.length}</span>
+      </div>
+
       <div className="inventory-layout">
-        <FilterPanel
-          filters={filters}
-          onChange={handleFiltersChange}
-          onClear={handleClearFilters}
-        />
+        <div className={`inv-filters${filtersOpen ? ' open' : ''}`}>
+          <div className="inv-filters-backdrop" onClick={() => setFiltersOpen(false)} />
+          <div className="inv-filters-sheet" role="dialog" aria-label={txt.filters}>
+            <div className="inv-filters-head">
+              <strong>{txt.filters}</strong>
+              <button type="button" onClick={() => setFiltersOpen(false)} aria-label={txt.close}><IoCloseOutline /></button>
+            </div>
+            <div className="inv-filters-body">
+              <FilterPanel
+                filters={filters}
+                onChange={handleFiltersChange}
+                onClear={handleClearFilters}
+              />
+            </div>
+            <div className="inv-filters-foot">
+              <button type="button" className="inv-foot-clear" onClick={handleClearFilters} disabled={activeFilters === 0}>{txt.clear}</button>
+              <button type="button" className="inv-foot-show" onClick={() => setFiltersOpen(false)}>{txt.show(results.length)}</button>
+            </div>
+          </div>
+        </div>
         <div className="inventory-content">
           <VehicleGrid vehicles={results} />
           {results.length === 0 && <NeedCarInline variant="empty" />}
