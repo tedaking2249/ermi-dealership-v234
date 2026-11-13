@@ -107,3 +107,18 @@
 .cmp-page { position: relative; }
 .cmp-head { padding-right: 46px; }
 .cmp-close { position: absolute; top: 14px; right: 12px; z-index: 6; width: 36px; height: 36px; border: 1px solid var(--ln, #cbd5e1); border-radius: 50%; background: var(--white, #fff); color: var(--ink, #0f2a5c); font-size: 1.4rem; line-height: 1; cursor: pointer; box-shadow: 0 2px 8px rgba(15, 42, 92, 0.15); }
+
+/* price strip + buyer suggestion */
+.cmp-advice { margin: 0 0 18px; padding: 16px; border: 1px solid var(--ln, #dbe3ef); border-radius: 16px; background: var(--soft, #f5f8fd); color: var(--ink, #0f2a5c); }
+.cmp-advice h3 { margin: 0 0 10px; font-size: 1rem; }
+.cmp-advice h3 + .cmp-sug-main, .cmp-advice .cmp-prices + h3 { margin-top: 16px; }
+.cmp-prices { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; }
+.cmp-price { display: flex; flex-direction: column; gap: 4px; padding: 10px 12px; border: 1px solid var(--ln, #dbe3ef); border-radius: 12px; background: var(--white, #fff); }
+.cmp-price span { font-size: 0.8rem; color: var(--sub, #5b6b87); }
+.cmp-price strong { font-size: 1.05rem; }
+.cmp-price.is-low { border-color: #16a34a; background: #f0fdf4; }
+.cmp-price.is-low strong { color: #15803d; }
+.cmp-sug-main { margin: 0 0 8px; font-weight: 700; }
+.cmp-sug-list { margin: 0 0 8px; padding-left: 20px; font-size: 0.92rem; }
+.cmp-sug-note { margin: 0 0 14px; font-size: 0.8rem; color: var(--sub, #5b6b87); }
+.cmp-done { width: 100%; padding: 12px; border: 0; border-radius: 12px; background: var(--color-primary, #1d4ed8); color: #fff; font: inherit; font-weight: 700; cursor: pointer; }

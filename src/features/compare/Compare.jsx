@@ -5,6 +5,7 @@ import { useLanguage } from '../../context/LanguageContext';
 import { useCompare, MAX_COMPARE } from './compareStore';
 import { TEXT } from './compareText';
 import './compare.css';
+import CompareAdvice from './CompareAdvice';
 
 const num = (v) => Number(v) || 0;
 
@@ -74,6 +75,7 @@ export default function Compare() {
   return (
     <div className="cmp-page">
       <button type="button" className="cmp-close" onClick={close} aria-label={L.close} title={L.close}>&times;</button>
+      <CompareAdvice />
       <div className="cmp-head">
         <h1>{L.title}</h1>
         {cars.length > 0 && (

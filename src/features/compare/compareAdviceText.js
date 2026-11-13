@@ -1,0 +1,26 @@
+export const ADVICE = {
+  en: {
+    priceHead: 'Price',
+    sugTitle: 'Our suggestion',
+    sugBest: '{n} looks like the best overall choice for you.',
+    sugPrice: 'Lowest price: {n}',
+    sugYear: 'Newest: {n}',
+    sugKm: 'Lowest mileage: {n}',
+    sugAuto: 'Automatic gearbox: {n}',
+    sugNote: 'Based on price, year, mileage and gearbox. Always inspect the car in person before you buy.',
+    sugTie: 'These cars are very close. Compare condition and service history in person.',
+    done: 'Done - back to cars',
+  },
+  am: {
+    priceHead: '\u12cb\u130b',
+    sugTitle: '\u12e8\u12a5\u129b \u121d\u12ad\u122d',
+    sugBest: '{n} \u1208\u12a5\u122d\u1235\u12ce \u121d\u122d\u1325 \u121d\u122d\u132b \u12ed\u1218\u1235\u120b\u120d\u1362',
+    sugPrice: '\u12dd\u1245\u1270\u129b \u12cb\u130b\u1366 {n}',
+    sugYear: '\u12a0\u12f2\u1235\u1366 {n}',
+    sugKm: '\u12a0\u1290\u1235\u1270\u129b \u12aa\u120e \u121c\u1275\u122d\u1366 {n}',
+    sugAuto: '\u12a0\u12cd\u1276\u121b\u1272\u12ad \u121b\u122d\u123d\u1366 {n}',
+    sugNote: '\u1260\u12cb\u130b\u1363 \u1260\u12d3\u1218\u1275\u1363 \u1260\u12aa\u120e \u121c\u1275\u122d \u12a5\u1293 \u1260\u121b\u122d\u123d \u120b\u12ed \u12e8\u1270\u1218\u1230\u1228\u1270 \u1290\u12cd\u1362 \u12a8\u1218\u130d\u12db\u1275\u12ce \u1260\u134a\u1275 \u1218\u12aa\u1293\u12cd\u1295 \u1260\u12a0\u12ab\u120d \u12ed\u1218\u122d\u121d\u1229\u1362',
+    sugTie: '\u12a5\u1290\u12da\u1205 \u1218\u12aa\u1296\u127d \u1260\u1323\u121d \u1270\u1240\u122b\u122b\u1262 \u1293\u1278\u12cd\u1362 \u1201\u1294\u1273\u12cd\u1295\u1293 \u12e8\u12a0\u1308\u120d\u130d\u120e\u1275 \u1273\u122a\u12a9\u1295 \u1260\u12a0\u12ab\u120d \u12eb\u12c8\u12f3\u12f5\u1229\u1362',
+    done: '\u1328\u122d\u123b\u1208\u1201 - \u12c8\u12f0 \u1218\u12aa\u1296\u127d \u1270\u1218\u1208\u1235',
+  },
+};
