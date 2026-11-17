@@ -127,3 +127,17 @@
 .cmp-page { display: flex; flex-direction: column; }
 .cmp-page > * { min-width: 0; }
 .cmp-advice-sug { order: 99; margin: 18px 0 0; }
+
+/* detailed suggestion */
+.cmp-sug-sub { margin: 10px 0 4px; font-size: 0.82rem; text-transform: uppercase; letter-spacing: 0.04em; color: var(--sub, #5b6b87); }
+.cmp-rank { margin: 0 0 14px; padding: 0; list-style: none; display: grid; gap: 6px; }
+.cmp-rank li { display: flex; justify-content: space-between; gap: 10px; padding: 8px 12px; border: 1px solid var(--ln, #dbe3ef); border-radius: 10px; background: var(--white, #fff); font-size: 0.92rem; }
+.cmp-car-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 12px; margin: 8px 0 12px; }
+.cmp-car-card { padding: 12px 14px; border: 1px solid var(--ln, #dbe3ef); border-radius: 14px; background: var(--white, #fff); }
+.cmp-car-card.is-best { border-color: #16a34a; box-shadow: 0 0 0 2px rgba(22, 163, 74, 0.15); }
+.cmp-car-top { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.cmp-badge { padding: 2px 8px; border-radius: 999px; background: #16a34a; color: #fff; font-size: 0.72rem; font-style: normal; font-weight: 700; white-space: nowrap; }
+.cmp-good, .cmp-watch { margin: 0; padding: 0; list-style: none; display: grid; gap: 5px; font-size: 0.88rem; }
+.cmp-good li, .cmp-watch li { position: relative; padding-left: 20px; }
+.cmp-good li::before { content: "\2713"; position: absolute; left: 0; color: #16a34a; font-weight: 700; }
+.cmp-watch li::before { content: "!"; position: absolute; left: 3px; color: #d97706; font-weight: 800; }
