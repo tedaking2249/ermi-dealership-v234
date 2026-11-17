@@ -141,3 +141,10 @@
 .cmp-good li, .cmp-watch li { position: relative; padding-left: 20px; }
 .cmp-good li::before { content: "\2713"; position: absolute; left: 0; color: #16a34a; font-weight: 700; }
 .cmp-watch li::before { content: "!"; position: absolute; left: 3px; color: #d97706; font-weight: 800; }
+
+/* AI advice */
+.cmp-ai { margin: 6px 0 12px; }
+.cmp-ai-btn { padding: 10px 16px; border: 1px solid var(--color-primary, #1d4ed8); border-radius: 12px; background: var(--white, #fff); color: var(--color-primary, #1d4ed8); font: inherit; font-weight: 700; cursor: pointer; }
+.cmp-ai-btn:disabled { opacity: 0.6; cursor: wait; }
+.cmp-ai-err { margin: 8px 0 0; font-size: 0.88rem; color: #b45309; }
+.cmp-ai-text { margin: 0 0 6px; padding: 12px 14px; border-radius: 12px; background: var(--white, #fff); border: 1px solid var(--ln, #dbe3ef); white-space: pre-wrap; line-height: 1.5; font-size: 0.92rem; }

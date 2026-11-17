@@ -1,4 +1,6 @@
+import { useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
+import api from '../../services/api';
 import { useVehicles } from '../../context/VehicleContext';
 import { useLanguage } from '../../context/LanguageContext';
 import { useCompare } from './compareStore';
@@ -39,6 +41,7 @@ export default function CompareAdvice() {
   const { lang } = useLanguage();
   const navigate = useNavigate();
   const [params] = useSearchParams();
+  const [ai, setAi] = useState({ state: 'idle', text: '' });
   const L = ADVICE[lang === 'am' ? 'am' : 'en'];
 
   const urlIds = (params.get('ids') || '').split(',').map((s) => s.trim()).filter(Boolean);
@@ -127,6 +130,30 @@ export default function CompareAdvice() {
     .sort((a, b) => b.score - a.score);
   const close = many && ranked[0].score - ranked[1].score < 3;
 
+  const askAI = async () => {
+    setAi({ state: 'loading', text: '' });
+    const raw = (c, a, b) => String(pick(c.v, a) || (b ? pick(c.v, b) : '') || '') || undefined;
+    try {
+      const res = await api.post('/compare/advice', {
+        lang: lang === 'am' ? 'am' : 'en',
+        cars: info.map((c) => ({
+          name: nameOf(c.v),
+          price: c.price || undefined,
+          year: c.year || undefined,
+          mileage: c.km || undefined,
+          fuel: raw(c, 'fuel', 'fuelType'),
+          transmission: raw(c, 'transmission'),
+          engine: raw(c, 'engine'),
+          body: raw(c, 'body', 'bodyType'),
+        })),
+      });
+      const advice = res?.data?.advice ?? res?.advice;
+      setAi(advice ? { state: 'done', text: advice } : { state: 'error', text: '' });
+    } catch (e) {
+      setAi({ state: 'error', text: '' });
+    }
+  };
+
   return (
     <>
       <section className="cmp-advice cmp-advice-price">
@@ -178,6 +205,23 @@ export default function CompareAdvice() {
           ))}
         </div>
 
+        {many && (
+          <div className="cmp-ai">
+            {ai.state !== 'done' && (
+              <button type="button" className="cmp-ai-btn" onClick={askAI} disabled={ai.state === 'loading'}>
+                {ai.state === 'loading' ? L.aiLoading : L.aiBtn}
+              </button>
+            )}
+            {ai.state === 'error' && <p className="cmp-ai-err">{L.aiErr}</p>}
+            {ai.state === 'done' && (
+              <>
+                <h4 className="cmp-sug-sub">{L.aiTitle}</h4>
+                <p className="cmp-ai-text">{ai.text}</p>
+                <p className="cmp-sug-note">{L.aiNote}</p>
+              </>
+            )}
+          </div>
+        )}
         <p className="cmp-sug-note">{L.sugNote}</p>
         <button type="button" className="cmp-done" onClick={done}>{L.done}</button>
       </section>

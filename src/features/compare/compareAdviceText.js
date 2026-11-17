@@ -129,3 +129,17 @@ export const ADVICE = {
     wOlder: '\u12a8\u1261\u12f5\u1291 \u12a0\u122e\u130c\u12cd\u1362',
   },
 };
+Object.assign(ADVICE.en, {
+  aiBtn: 'Ask AI for advice',
+  aiLoading: 'Thinking...',
+  aiTitle: 'AI advice',
+  aiErr: 'AI advice is not available right now. The suggestion above still works.',
+  aiNote: 'Written by AI from the car details only. Always inspect the car in person.',
+});
+Object.assign(ADVICE.am, {
+  aiBtn: '\u1260 AI \u121d\u12ad\u122d \u1320\u12ed\u1245',
+  aiLoading: '\u1260\u121b\u1230\u1265 \u120b\u12ed...',
+  aiTitle: '\u12e8 AI \u121d\u12ad\u122d',
+  aiErr: '\u12e8 AI \u121d\u12ad\u122d \u12a0\u1201\u1295 \u12a0\u12ed\u1308\u129d\u121d\u1362 \u12a8\u120b\u12ed \u12eb\u1208\u12cd \u121d\u12ad\u122d \u12a0\u1201\u1295\u121d \u12ed\u1230\u122b\u120d\u1362',
+  aiNote: '\u1260 AI \u12e8\u1270\u12d8\u130b\u1300\u12cd \u12a8\u1218\u12aa\u1293\u12ce\u1279 \u12dd\u122d\u12dd\u122d \u1265\u127b \u1290\u12cd\u1362 \u1218\u12aa\u1293\u12cd\u1295 \u1201\u120d\u130a\u12dc \u1260\u12a0\u12ab\u120d \u12ed\u1218\u122d\u121d\u1229\u1362',
+});
