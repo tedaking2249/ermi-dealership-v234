@@ -1,123 +1,180 @@
 import { useEffect, useState } from 'react';
-import { Link, useNavigate, useSearchParams } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useVehicles } from '../../context/VehicleContext';
 import { useLanguage } from '../../context/LanguageContext';
-import { useCompare, MAX_COMPARE } from './compareStore';
-import { TEXT } from './compareText';
+import api from '../../services/api';
+import { useCompare } from './compareStore';
+import { AI_TEXT } from './compareAiText';
 import './compare.css';
-import CompareAdvice from './CompareAdvice';
 
-const num = (v) => Number(v) || 0;
+const pick = (v, k) => v?.[k] ?? v?.specs?.[k];
+const str = (v, a, b) => String(pick(v, a) || (b ? pick(v, b) : '') || '').trim();
+const nameOf = (v) => [v.year, v.make, v.model].filter(Boolean).join(' ');
+const shortOf = (v) => [v.year, v.make].filter(Boolean).join(' ');
+const photoOf = (v) => v.image || v.photos?.[0] || '';
+const money = (n) => `${Number(n).toLocaleString()} ETB`;
+const tone = (s) => (s >= 75 ? 'good' : s >= 50 ? 'mid' : 'low');
+
+const toPayload = (v) => ({
+  name: nameOf(v).slice(0, 80) || 'Car',
+  price: Number(v.price) || undefined,
+  year: Number(v.year) || undefined,
+  mileage: Number(v.mileage) || undefined,
+  fuel: str(v, 'fuel', 'fuelType').slice(0, 30) || undefined,
+  transmission: str(v, 'transmission').slice(0, 30) || undefined,
+  engine: str(v, 'engine').slice(0, 30) || undefined,
+  body: str(v, 'body', 'bodyType').slice(0, 30) || undefined,
+});
 
 export default function Compare() {
-  const { vehicles, loading } = useVehicles();
+  const { vehicles } = useVehicles();
+  const { ids, clear } = useCompare();
   const { lang } = useLanguage();
-  const L = TEXT[lang === 'am' ? 'am' : 'en'];
-  const store = useCompare();
-  const [params, setParams] = useSearchParams();
-  const [copied, setCopied] = useState(false);
   const navigate = useNavigate();
+  const [params] = useSearchParams();
+  const L = AI_TEXT[lang === 'am' ? 'am' : 'en'];
+  const [tries, setTries] = useState(0);
+  const [state, setState] = useState({ status: 'loading', result: null });
+
+  const urlIds = (params.get('ids') || '').split(',').map((s) => s.trim()).filter(Boolean);
+  const wanted = urlIds.length ? urlIds : ids;
+  const cars = wanted.map((id) => vehicles.find((v) => String(v.id) === String(id))).filter(Boolean).slice(0, 3);
+  const enough = cars.length >= 2;
+  const payloadKey = JSON.stringify(cars.map(toPayload));
+
   const close = () => navigate('/inventory');
+  const done = () => { clear(); navigate('/inventory'); };
+
   useEffect(() => {
     const onKey = (e) => { if (e.key === 'Escape') navigate('/inventory'); };
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
   }, [navigate]);
 
-  const urlIds = (params.get('ids') || '').split(',').map((s) => s.trim()).filter(Boolean).slice(0, MAX_COMPARE);
-  const fromUrl = urlIds.length > 0;
-  const ids = fromUrl ? urlIds : store.ids;
-  const cars = ids.map((id) => vehicles.find((v) => String(v.id) === String(id))).filter(Boolean);
+  useEffect(() => {
+    if (!enough) return undefined;
+    let alive = true;
+    setState({ status: 'loading', result: null });
+    api.post('/compare/advice', { lang: lang === 'am' ? 'am' : 'en', cars: JSON.parse(payloadKey) })
+      .then((res) => {
+        const r = res?.data?.result ?? res?.result;
+        if (alive) setState(r ? { status: 'done', result: r } : { status: 'error', result: null });
+      })
+      .catch(() => { if (alive) setState({ status: 'error', result: null }); });
+    return () => { alive = false; };
+  }, [payloadKey, lang, tries, enough]);
 
-  const removeCar = (id) => {
-    if (fromUrl) {
-      const rest = urlIds.filter((x) => x !== String(id));
-      setParams(rest.length ? { ids: rest.join(',') } : {});
-    } else {
-      store.remove(id);
-    }
-  };
-  const clearAll = () => { store.clear(); setParams({}); };
+  const r = state.result;
+  const winner = r ? r.winner : 0;
+  const closeBtn = <button type="button" className="cmp-close" onClick={close} aria-label={L.close} title={L.close}>&times;</button>;
 
-  const share = async () => {
-    const link = `${window.location.origin}/compare?ids=${cars.map((c) => c.id).join(',')}`;
-    try { await navigator.clipboard.writeText(link); } catch { window.prompt(L.copy, link); }
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
-  };
-
-  const rows = [
-    { label: L.price, get: (v) => num(v.price), fmt: (n) => `ETB ${n.toLocaleString()}`, best: 'min' },
-    { label: L.year, get: (v) => num(v.year), fmt: (n) => String(n), best: 'max' },
-    { label: L.mileage, get: (v) => num(v.mileage), fmt: (n) => `${n.toLocaleString()} km`, best: 'min' },
-    { label: L.fuel, get: (v) => v.fuelType || '' },
-    { label: L.trans, get: (v) => v.transmission || '' },
-    { label: L.body, get: (v) => v.bodyType || '' },
-    { label: L.engine, get: (v) => v.engine || '' },
-    { label: L.color, get: (v) => v.color || '' },
-    { label: L.exchange, get: (v) => (v.exchangeAvailable ? (v.exchangeCar ? `${L.yes}: ${v.exchangeCar}` : L.yes) : '') },
-  ];
-
-  const prepared = rows
-    .map((row) => {
-      const raw = cars.map((v) => row.get(v));
-      const shown = raw.map((x) => (typeof x === 'number' ? (x > 0 ? row.fmt(x) : '') : x));
-      if (shown.every((s) => !s)) return null; // nobody has this value: hide the row
-      let bestVal = null;
-      if (row.best) {
-        const nums = raw.filter((x) => typeof x === 'number' && x > 0);
-        if (nums.length >= 2 && new Set(nums).size > 1) bestVal = row.best === 'min' ? Math.min(...nums) : Math.max(...nums);
-      }
-      return { label: row.label, shown, isBest: raw.map((x) => bestVal !== null && x === bestVal) };
-    })
-    .filter(Boolean);
-
-  return (
-    <div className="cmp-page">
-      <button type="button" className="cmp-close" onClick={close} aria-label={L.close} title={L.close}>&times;</button>
-      <CompareAdvice />
-      <div className="cmp-head">
-        <h1>{L.title}</h1>
-        {cars.length > 0 && (
-          <div className="cmp-head-actions">
-            {cars.length >= 2 && <button type="button" onClick={share}>{copied ? L.copied : L.copy}</button>}
-            <button type="button" onClick={clearAll}>{L.clear}</button>
+  if (!enough) {
+    return (
+      <div className="cmpx">
+        {closeBtn}
+        <h1 className="cmpx-title">{L.title}</h1>
+        {vehicles.length === 0 ? (
+          <p className="cmpx-msg">{L.loading}</p>
+        ) : (
+          <div className="cmpx-empty">
+            <p>{L.need}</p>
+            <button type="button" className="cmp-done" onClick={close}>{L.browse}</button>
           </div>
         )}
       </div>
+    );
+  }
 
-      {loading && cars.length === 0 ? (
-        <p className="cmp-empty">{L.loading}</p>
-      ) : cars.length < 2 ? (
-        <div className="cmp-empty">
-          <p>{L.need}</p>
-          <Link to="/inventory" className="cmp-go">{L.browse}</Link>
-        </div>
-      ) : (
-        <div className="cmp-table" style={{ '--cols': cars.length }}>
-          <div className="cmp-row cmp-top">
-            <div className="cmp-label" />
-            {cars.map((v) => (
-              <div className="cmp-cell cmp-car" key={v.id}>
-                <button type="button" className="cmp-x" onClick={() => removeCar(v.id)} aria-label="Remove">&times;</button>
-                <Link to={`/inventory/${v.id}`}>
-                  {(v.image || v.photos?.[0]) && <img src={v.image || v.photos[0]} alt="" />}
-                  <strong>{v.year} {v.make} {v.model}</strong>
-                </Link>
-                <Link to={`/inventory/${v.id}`} className="cmp-view">{L.view}</Link>
+  return (
+    <div className="cmpx">
+      {closeBtn}
+      <h1 className="cmpx-title">{L.title}</h1>
+
+      <div className="cmpx-cars">
+        {cars.map((v, i) => {
+          const c = r?.cars?.[i];
+          const km = Number(v.mileage) > 0 ? `${Number(v.mileage).toLocaleString()} km` : '';
+          const chips = [v.year, km, str(v, 'fuel', 'fuelType'), str(v, 'transmission'), str(v, 'engine')].filter(Boolean);
+          const isBest = r && winner === i + 1;
+          return (
+            <div className={`cmpx-car${isBest ? ' is-best' : ''}`} key={v.id}>
+              {photoOf(v) && <img className="cmpx-photo" src={photoOf(v)} alt="" />}
+              <div className="cmpx-body">
+                <div className="cmpx-top">
+                  <h2 className="cmpx-name">{[v.make, v.model].filter(Boolean).join(' ')}</h2>
+                  {isBest && <em className="cmpx-badge">{L.best}</em>}
+                </div>
+                <p className="cmpx-price">{Number(v.price) > 0 ? money(v.price) : '-'}</p>
+                <div className="cmpx-chips">{chips.map((x) => <span key={x}>{x}</span>)}</div>
+                {c && (
+                  <div className={`cmpx-score ${tone(c.score)}`}>
+                    <div className="cmpx-scoreline"><span>{L.score}</span><b>{c.score}/100</b></div>
+                    <div className="cmpx-bar"><i style={{ width: `${c.score}%` }} /></div>
+                  </div>
+                )}
               </div>
-            ))}
-          </div>
-          {prepared.map((row) => (
-            <div className="cmp-row" key={row.label}>
-              <div className="cmp-label">{row.label}</div>
-              {row.shown.map((s, i) => (
-                <div key={i} className={`cmp-cell${row.isBest[i] ? ' best' : ''}${s ? '' : ' empty'}`}>{s || '\u2014'}</div>
-              ))}
             </div>
-          ))}
+          );
+        })}
+      </div>
+
+      {state.status === 'loading' && (
+        <div className="cmpx-wait" role="status">
+          <div className="cmpx-skel" /><div className="cmpx-skel" /><div className="cmpx-skel short" />
+          <p><strong>{L.analyzing}</strong><br />{L.analyzingSub}</p>
         </div>
       )}
+
+      {state.status === 'error' && (
+        <div className="cmpx-error">
+          <p>{L.err}</p>
+          <button type="button" className="cmpx-retry" onClick={() => setTries((n) => n + 1)}>{L.retry}</button>
+        </div>
+      )}
+
+      {r && (
+        <>
+          <div className="cmpx-banner">
+            <span>{winner > 0 && cars[winner - 1] ? `${L.best}: ${shortOf(cars[winner - 1])}` : L.tie}</span>
+            <p>{r.headline}</p>
+          </div>
+
+          <div className="cmpx-insights">
+            {cars.map((v, i) => {
+              const c = r.cars[i];
+              if (!c) return null;
+              return (
+                <div className="cmpx-card" key={v.id}>
+                  <h3>{shortOf(v)}</h3>
+                  {c.summary && <p className="cmpx-sum">{c.summary}</p>}
+                  {c.pros.length > 0 && (<><h4>{L.pros}</h4><ul className="cmpx-pros">{c.pros.map((x) => <li key={x}>{x}</li>)}</ul></>)}
+                  {c.cons.length > 0 && (<><h4>{L.cons}</h4><ul className="cmpx-cons">{c.cons.map((x) => <li key={x}>{x}</li>)}</ul></>)}
+                </div>
+              );
+            })}
+          </div>
+
+          {r.categories.length > 0 && (
+            <div className="cmpx-cats">
+              <h3>{L.byCat}</h3>
+              {r.categories.map((c) => (
+                <div className="cmpx-cat" key={c.label + c.note}>
+                  <strong>{c.label}</strong>
+                  <span className="cmpx-cat-note">{c.note}</span>
+                  <em className={c.best > 0 ? 'win' : ''}>{c.best > 0 && cars[c.best - 1] ? shortOf(cars[c.best - 1]) : L.tieShort}</em>
+                </div>
+              ))}
+            </div>
+          )}
+
+          {r.tip && (
+            <div className="cmpx-tip"><h4>{L.tipTitle}</h4><p>{r.tip}</p></div>
+          )}
+          <p className="cmpx-note">{L.note}</p>
+        </>
+      )}
+
+      <button type="button" className="cmp-done" onClick={done}>{L.done}</button>
     </div>
   );
 }
